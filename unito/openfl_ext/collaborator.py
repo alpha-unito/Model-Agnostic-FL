@@ -5,10 +5,10 @@ from openfl.pipelines import NoCompressionPipeline
 from openfl.utilities import TensorKey
 from logging import getLogger
 from time import sleep
+from openfl.protocols import utils
 
 from .tensor_codec import TensorCodec
 from .tensor_db import TensorDB
-from .protocols import utils
 
 
 class Collaborator(Collaborator):

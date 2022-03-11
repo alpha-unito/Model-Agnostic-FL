@@ -8,10 +8,10 @@ from openfl.utilities.logs import write_metric
 from openfl.utilities import TaskResultKey
 from openfl.utilities import TensorKey
 
+from openfl.protocols import utils
+
 from .tensor_codec import TensorCodec
-from .protocols import utils
 from .tensor_db import TensorDB
-from .identity import Identity
 from .aggregate_random_forest import AggregateRandomForest
 
 

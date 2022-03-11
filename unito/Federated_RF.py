@@ -19,7 +19,7 @@ X, y = iris.data, iris.target
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, train_size=0.7, random_state=random_state,
                                                     shuffle=False)
 
-fl_data = FederatedDataSet(X_train, y_train, X_test, y_test, batch_size=100000, num_classes=3)
+fl_data = FederatedDataSet(X_train, y_train, X_test, y_test, batch_size=50, num_classes=3)
 fl_model = FederatedModel(build_model=MyRandomForestClassifier, data_loader=fl_data)
 experiment_collaborators = {col_name: col_model for col_name, col_model
                             in zip(collaborator_list, fl_model.setup(len(collaborator_list)))}
