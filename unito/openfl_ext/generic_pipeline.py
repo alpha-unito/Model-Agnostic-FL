@@ -1,6 +1,6 @@
 """GenericPipeline module."""
 
-from .pipeline import TransformationPipeline, Float32NumpyArrayToBytes
+from unito.openfl_ext.pipeline import TransformationPipeline, Float32NumpyArrayToBytes
 
 
 class GenericPipeline(TransformationPipeline):

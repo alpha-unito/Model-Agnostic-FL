@@ -7,8 +7,8 @@ from logging import getLogger
 from time import sleep
 from openfl.protocols import utils
 
-from .tensor_codec import TensorCodec
-from .tensor_db import TensorDB
+from unito.openfl_ext.tensor_codec import TensorCodec
+from unito.openfl_ext.tensor_db import TensorDB
 
 
 class Collaborator(Collaborator):
@@ -96,6 +96,24 @@ class Collaborator(Collaborator):
 
         self.task_runner.set_optimizer_treatment(self.opt_treatment.name)
 
+    def run(self):
+        """Run the collaborator."""
+        while True:
+            tasks, round_number, sleep_time, time_to_quit = self.get_tasks()
+            if time_to_quit:
+                break
+            elif sleep_time > 0:
+                sleep(sleep_time)  # some sleep function
+            else:
+                self.logger.info(f'Received the following tasks: {tasks}')
+                for task in tasks:
+                    self.do_task(task, round_number)
+
+                # Cleaning tensor db
+                self.tensor_db.clean_up(self.db_store_rounds)
+
+        self.logger.info('End of Federation reached. Exiting...')
+
     def run_simulation(self):
         """
         Specific function for the simulation.
@@ -119,6 +137,7 @@ class Collaborator(Collaborator):
                                  f'for round {round_number}...')
                 break
 
+    # TODO This is clearly not right
     def do_task(self, task, round_number):
         """Do the specified task."""
         # map this task to an actual function name and kwargs

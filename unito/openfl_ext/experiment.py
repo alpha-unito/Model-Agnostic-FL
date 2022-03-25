@@ -1,10 +1,20 @@
 from openfl.interface.interactive_api.experiment import FLExperiment
 from openfl.interface.cli_helper import WORKSPACE
+from openfl.utilities import split_tensor_dict_for_holdouts
 
-from .plan import Plan
+from unito.openfl_ext.plan import Plan
 
 import os
 from copy import deepcopy
+
+
+class ModelStatus:
+    """Model statuses."""
+
+    INITIAL = 'initial'
+    BEST = 'best'
+    LAST = 'last'
+    RESTORED = 'restored'
 
 
 class FLExperiment(FLExperiment):
@@ -45,6 +55,22 @@ class FLExperiment(FLExperiment):
         else:
             self.logger.info('Experiment was not accepted or failed.')
 
+    def _get_initial_tensor_dict(self, model_provider, nn=False):  # TODO pass the nn parameter from outside
+        """Extract initial weights from the model."""
+        self.task_runner_stub = self.plan.get_core_task_runner(model_provider=model_provider)
+        self.current_model_status = ModelStatus.INITIAL
+
+        if nn:
+            tensor_dict, _ = split_tensor_dict_for_holdouts(
+                self.logger,
+                self.task_runner_stub.get_tensor_dict(False),
+                **self.task_runner_stub.tensor_dict_split_fn_kwargs
+            )
+        else:
+            tensor_dict = {'model': None}
+
+        return tensor_dict
+
     def _prepare_plan(self, model_provider, task_keeper, data_loader,
                       rounds_to_train,
                       delta_updates, opt_treatment,
@@ -58,7 +84,7 @@ class FLExperiment(FLExperiment):
         os.makedirs('./plan', exist_ok=True)
         os.makedirs('./save', exist_ok=True)
         # Load the default plan
-        base_plan_path = WORKSPACE / 'workspace/plan/plans/default/base_plan_interactive_api.yaml' if default else WORKSPACE / './plan/plan.yaml'
+        base_plan_path = WORKSPACE / 'workspace/plan/plans/default/base_plan_interactive_api.yaml'
         plan = Plan.parse(base_plan_path, resolve=False)
         # Change plan name to default one
         plan.name = 'plan.yaml'

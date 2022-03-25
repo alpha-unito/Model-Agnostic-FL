@@ -1,6 +1,6 @@
 from openfl.native import *
 
-from .plan import Plan
+from unito.openfl_ext.plan import Plan
 
 
 def run_experiment(collaborator_dict: dict, override_config: dict = None, nn: bool = False):

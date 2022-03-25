@@ -10,9 +10,9 @@ from openfl.utilities import TensorKey
 
 from openfl.protocols import utils
 
-from .tensor_codec import TensorCodec
-from .tensor_db import TensorDB
-from .aggregate_random_forest import AggregateRandomForest
+from unito.openfl_ext.tensor_codec import TensorCodec
+from unito.openfl_ext.tensor_db import TensorDB
+from unito.openfl_ext.aggregate_random_forest import AggregateRandomForest
 
 
 class Aggregator(Aggregator):
@@ -403,6 +403,11 @@ class Aggregator(Aggregator):
                         f'Aggregated metric {agg_tensor_name} could not be collected '
                         f'for round {self.round_number}. Skipping reporting for this round')
                 if agg_function:
+                    print(round_number)
+                    print(task_name)
+                    print(agg_function)
+                    print(agg_tensor_name)
+                    print(agg_results)
                     self.logger.metric(f'Round {round_number}, aggregator: {task_name} '
                                        f'{agg_function} {agg_tensor_name}:\t{agg_results:.4f}')
                 else:

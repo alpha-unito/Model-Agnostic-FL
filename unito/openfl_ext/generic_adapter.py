@@ -1,5 +1,6 @@
 from openfl.plugins.frameworks_adapters.framework_adapter_interface import FrameworkAdapterPluginInterface
 
+
 class GenericAdapter(FrameworkAdapterPluginInterface):
     """Generic adapter plugin class."""
 
@@ -20,7 +21,7 @@ class GenericAdapter(FrameworkAdapterPluginInterface):
         Returns:
         dict {weight name: numpy ndarray}
         """
-        raise NotImplementedError
+        return {'model': model}
 
     @staticmethod
     def set_tensor_dict(model, tensor_dict, optimizer=None, device='cpu'):
@@ -30,4 +31,4 @@ class GenericAdapter(FrameworkAdapterPluginInterface):
         Given a dict {weight name: numpy ndarray} sets weights to
         the model and optimizer objects inplace.
         """
-        raise NotImplementedError
+        return tensor_dict

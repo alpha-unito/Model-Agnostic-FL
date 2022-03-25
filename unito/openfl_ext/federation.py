@@ -1,6 +1,6 @@
 from openfl.interface.interactive_api.federation import Federation
 
-from .director_client import DirectorClient
+from unito.openfl_ext.director_client import DirectorClient
 
 
 class Federation(Federation):
@@ -18,3 +18,7 @@ class Federation(Federation):
             private_key=api_private_key,
             certificate=api_cert
         )
+
+    def get_shard_registry(self):
+        """Return a shard registry."""
+        return self.dir_client.get_envoys()

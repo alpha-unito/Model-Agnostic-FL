@@ -1,7 +1,12 @@
-from openfl.federated.plan import Plan
-from openfl.interface.cli_helper import WORKSPACE
 from yaml import dump
 from pathlib import Path
+from logging import getLogger
+from os.path import splitext
+from importlib import import_module
+
+from openfl.federated.plan import Plan
+from openfl.interface.cli_helper import WORKSPACE
+from openfl.transport import AggregatorGRPCServer
 
 SETTINGS = 'settings'
 TEMPLATE = 'template'
@@ -12,8 +17,7 @@ AUTO = 'auto'
 class Plan(Plan):
     """Federated Learning plan."""
 
-    def __init__(self):
-        super().__init__()
+    logger = getLogger(__name__)
 
     @staticmethod
     def parse(plan_config_path: Path, cols_config_path: Path = None,
@@ -105,19 +109,21 @@ class Plan(Plan):
                                   extra={'markup': True})
             raise
 
-    def get_aggregator(self, tensor_dict=None, nn=False):
+    # TODO Why the plan is overridden by the default one?
+    def get_aggregator(self, tensor_dict=None):
         """Get federation aggregator."""
         defaults = self.config.get('aggregator',
                                    {
                                        TEMPLATE: 'openfl.component.Aggregator',
                                        SETTINGS: {}
                                    })
-
+        defaults['template'] = 'unito.openfl_ext.aggregator.Aggregator'  # TODO this should be in the plan file
         defaults[SETTINGS]['aggregator_uuid'] = self.aggregator_uuid
         defaults[SETTINGS]['federation_uuid'] = self.federation_uuid
         defaults[SETTINGS]['authorized_cols'] = self.authorized_cols
         defaults[SETTINGS]['assigner'] = self.get_assigner()
         defaults[SETTINGS]['compression_pipeline'] = self.get_tensor_pipe()
+        defaults[SETTINGS]['nn'] = False  # TODO this should be in the plan file
         log_metric_callback = defaults[SETTINGS].get('log_metric_callback')
 
         if log_metric_callback:
@@ -129,8 +135,8 @@ class Plan(Plan):
 
         defaults[SETTINGS]['log_metric_callback'] = log_metric_callback
         if self.aggregator_ is None:
-            self.aggregator_ = Plan.build(**defaults, initial_tensor_dict=tensor_dict, nn=nn)
-
+            Plan.logger.info(f'{defaults}')
+            self.aggregator_ = Plan.build(**defaults, initial_tensor_dict=tensor_dict)
         return self.aggregator_
 
     def get_collaborator(self, collaborator_name, root_certificate=None, private_key=None,
@@ -143,10 +149,11 @@ class Plan(Plan):
                 SETTINGS: {}
             }
         )
-
+        defaults['template'] = 'unito.openfl_ext.collaborator.Collaborator'  # TODO this should be in the plan file
         defaults[SETTINGS]['collaborator_name'] = collaborator_name
         defaults[SETTINGS]['aggregator_uuid'] = self.aggregator_uuid
         defaults[SETTINGS]['federation_uuid'] = self.federation_uuid
+        defaults[SETTINGS]['nn'] = nn  # TODO this should be in the plan file
 
         if task_runner is not None:
             defaults[SETTINGS]['task_runner'] = task_runner
@@ -184,9 +191,39 @@ class Plan(Plan):
             )
 
         if self.collaborator_ is None:
-            self.collaborator_ = Plan.build(**defaults, nn=nn)
+            self.collaborator_ = Plan.build(**defaults)
 
         return self.collaborator_
+
+    def get_core_task_runner(self, data_loader=None,
+                             model_provider=None,
+                             task_keeper=None):
+        """Get task runner."""
+        defaults = self.config.get(
+            'task_runner',
+            {
+                TEMPLATE: 'openfl.federated.task.task_runner.CoreTaskRunner',
+                SETTINGS: {}
+            })
+
+        defaults['template'] = 'unito.openfl_ext.runner_generic.GenericTaskRunner'  # TODO this should be in the plan file
+        # We are importing a CoreTaskRunner instance!!!
+        if self.runner_ is None:
+            self.runner_ = Plan.build(**defaults)
+
+        self.runner_.set_data_loader(data_loader)
+
+        self.runner_.set_model_provider(model_provider)
+        self.runner_.set_task_provider(task_keeper)
+
+        framework_adapter = Plan.build(
+            self.config['task_runner']['required_plugin_components']['framework_adapters'], {})
+
+        # This step initializes tensorkeys
+        # Which have no sens if task provider is not set up
+        self.runner_.set_framework_adapter(framework_adapter)
+
+        return self.runner_
 
     def get_tensor_pipe(self):
         """Get data tensor pipeline."""
@@ -197,8 +234,44 @@ class Plan(Plan):
                 SETTINGS: {}
             }
         )
-
+        defaults[
+            'template'] = 'unito.openfl_ext.generic_pipeline.GenericPipeline'  # TODO this should be in the plan file
         if self.pipe_ is None:
             self.pipe_ = Plan.build(**defaults)
 
         return self.pipe_
+
+    def interactive_api_get_server(self, *, tensor_dict, root_certificate, certificate,
+                                   private_key, tls):
+        """Get gRPC server of the aggregator instance."""
+        server_args = self.config['network'][SETTINGS]
+
+        # patch certificates
+        server_args['root_certificate'] = root_certificate
+        server_args['certificate'] = certificate
+        server_args['private_key'] = private_key
+        server_args['tls'] = tls
+
+        server_args['aggregator'] = self.get_aggregator(tensor_dict)
+        if self.server_ is None:
+            self.server_ = AggregatorGRPCServer(**server_args)
+
+        return self.server_
+
+    def deserialize_interface_objects(self):
+        """Deserialize objects for TaskRunner."""
+        api_layer = self.config['api_layer']
+        filenames = [
+            'model_interface_file',
+            'tasks_interface_file',
+            'dataloader_interface_file'
+        ]
+        return (self.restore_object(api_layer['settings'][filename]) for filename in filenames)
+
+    def restore_object(self, filename):
+        """Deserialize an object."""
+        serializer_plugin = self.get_serializer_plugin()
+        if serializer_plugin is None:
+            return None
+        obj = serializer_plugin.restore_object(filename)
+        return obj

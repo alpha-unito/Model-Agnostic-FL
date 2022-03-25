@@ -48,7 +48,7 @@ class TensorDB(TensorDB):
                                 & (self.tensor_db['report'] == report)
                                 & (self.tensor_db['tags'] == tags)]['nparray']
         if len(raw_df) > 0:
-            return np.array(raw_df.iloc[0]), {}
+            return np.array(raw_df.iloc[0])  # TODO , {} this is strange
 
         for col in collaborator_names:
             if type(tags) == str:
