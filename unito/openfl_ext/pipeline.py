@@ -32,7 +32,8 @@ class Float32NumpyArrayToBytes(Float32NumpyArrayToBytes):
                 data = data.astype(np.float32)
             array_shape = data.shape
             # Better call it array_shape?
-            metadata = {'int_list': list(array_shape)}
+            metadata = {'int_list': list(array_shape),
+                        'model': False}
             data_bytes = data.tobytes(order='C')
         else:
             data_bytes = dumps(data)

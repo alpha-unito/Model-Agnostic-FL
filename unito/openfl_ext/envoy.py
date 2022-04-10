@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 @pass_context
 def envoy(context):
     """Manage Federated Learning Envoy."""
-    context.obj['group'] = 'envoy'
+    context.obj['group'] = 'envoy_1'
 
 
 @envoy.command(name='start')
@@ -66,7 +66,7 @@ def start_(shard_name, director_host, director_port, tls, envoy_config_path,
     if certificate:
         certificate = Path(certificate).absolute()
 
-    # Parse envoy parameters
+    # Parse envoy_1 parameters
     envoy_params = envoy_config.get('params', {})
 
     # Build optional plugin components
@@ -102,10 +102,10 @@ def start_(shard_name, director_host, director_port, tls, envoy_config_path,
 
 
 @envoy.command(name='create-workspace')
-@option('-p', '--envoy-path', required=True,
+@option('-p', '--envoy_1-path', required=True,
         help='The Envoy path', type=ClickPath())
 def create(envoy_path):
-    """Create an envoy workspace."""
+    """Create an envoy_1 workspace."""
     if is_directory_traversal(envoy_path):
         click.echo('The Envoy path is out of the openfl workspace scope.')
         sys.exit(1)
@@ -131,7 +131,7 @@ def shard_descriptor_from_config(shard_config: dict):
     template = shard_config.get('template')
     if not template:
         raise Exception('You should define a shard '
-                        'descriptor template in the envoy config')
+                        'descriptor template in the envoy_1 config')
     class_name = template.split('.')[-1]
     module_path = '.'.join(template.split('.')[:-1])
     params = shard_config.get('params', {})

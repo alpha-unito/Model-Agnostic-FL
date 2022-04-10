@@ -4,7 +4,7 @@ from sklearn.datasets import load_iris
 
 
 class IrisDataset(DataInterface):
-    def __init__(self, random_state, **kwargs):
+    def __init__(self, random_state=42, **kwargs):
         super().__init__(**kwargs)
 
         iris = load_iris()

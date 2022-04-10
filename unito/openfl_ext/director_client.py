@@ -16,8 +16,7 @@ class DirectorClient(DirectorClient):
                            initial_tensor_dict=None):
         """Send the new experiment to director to launch."""
         logger.info('SetNewExperiment')
-        model_proto = construct_model_proto(initial_tensor_dict if initial_tensor_dict else {"model": None}, 0,
-                                            GenericPipeline())
+        model_proto = construct_model_proto(initial_tensor_dict, 0, GenericPipeline())
         experiment_info_gen = self._get_experiment_info(
             arch_path=arch_path,
             name=name,

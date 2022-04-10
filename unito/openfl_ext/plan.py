@@ -1,12 +1,10 @@
-from yaml import dump
-from pathlib import Path
 from logging import getLogger
-from os.path import splitext
-from importlib import import_module
+from pathlib import Path
 
 from openfl.federated.plan import Plan
 from openfl.interface.cli_helper import WORKSPACE
 from openfl.transport import AggregatorGRPCServer
+from yaml import dump
 
 SETTINGS = 'settings'
 TEMPLATE = 'template'
@@ -206,7 +204,8 @@ class Plan(Plan):
                 SETTINGS: {}
             })
 
-        defaults['template'] = 'unito.openfl_ext.runner_generic.GenericTaskRunner'  # TODO this should be in the plan file
+        defaults[
+            'template'] = 'unito.openfl_ext.runner_generic.GenericTaskRunner'  # TODO this should be in the plan file
         # We are importing a CoreTaskRunner instance!!!
         if self.runner_ is None:
             self.runner_ = Plan.build(**defaults)

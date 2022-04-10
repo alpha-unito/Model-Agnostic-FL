@@ -21,7 +21,7 @@ class GenericAdapter(FrameworkAdapterPluginInterface):
         Returns:
         dict {weight name: numpy ndarray}
         """
-        return {'model': model}
+        return {'generic_model': model}
 
     @staticmethod
     def set_tensor_dict(model, tensor_dict, optimizer=None, device='cpu'):
@@ -31,4 +31,4 @@ class GenericAdapter(FrameworkAdapterPluginInterface):
         Given a dict {weight name: numpy ndarray} sets weights to
         the model and optimizer objects inplace.
         """
-        return tensor_dict
+        pass

@@ -1,18 +1,17 @@
-from logging import getLogger
 import queue
+from logging import getLogger
 
 from openfl.component.aggregation_functions import WeightedAverage
 from openfl.component.aggregator import *
 from openfl.protocols import ModelProto
-from openfl.utilities.logs import write_metric
+from openfl.protocols import utils
 from openfl.utilities import TaskResultKey
 from openfl.utilities import TensorKey
+from openfl.utilities.logs import write_metric
 
-from openfl.protocols import utils
-
+from unito.openfl_ext.aggregate_random_forest import AggregateRandomForest
 from unito.openfl_ext.tensor_codec import TensorCodec
 from unito.openfl_ext.tensor_db import TensorDB
-from unito.openfl_ext.aggregate_random_forest import AggregateRandomForest
 
 
 class Aggregator(Aggregator):
@@ -93,21 +92,15 @@ class Aggregator(Aggregator):
         self.metric_queue = queue.Queue()
         self.best_model_score = None
 
-        if self.nn:
-            if kwargs.get('initial_tensor_dict', None) is not None:
-                self._load_initial_tensors_from_dict(kwargs['initial_tensor_dict'])
-                self.model = utils.construct_model_proto(
-                    tensor_dict=kwargs['initial_tensor_dict'],
-                    round_number=0,
-                    tensor_pipe=self.compression_pipeline)
-            else:
-                self.model: ModelProto = utils.load_proto(self.init_state_path)
-                self._load_initial_tensors()  # keys are TensorKeys
-        else:
+        if kwargs.get('initial_tensor_dict', None) is not None:
+            self._load_initial_tensors_from_dict(kwargs['initial_tensor_dict'])
             self.model = utils.construct_model_proto(
-                tensor_dict={'model': None},
+                tensor_dict=kwargs['initial_tensor_dict'],
                 round_number=0,
                 tensor_pipe=self.compression_pipeline)
+        else:
+            self.model: ModelProto = utils.load_proto(self.init_state_path)
+            self._load_initial_tensors()  # keys are TensorKeys
 
         self.log_dir = f'logs/{self.uuid}_{self.federation_uuid}'
 
@@ -403,11 +396,6 @@ class Aggregator(Aggregator):
                         f'Aggregated metric {agg_tensor_name} could not be collected '
                         f'for round {self.round_number}. Skipping reporting for this round')
                 if agg_function:
-                    print(round_number)
-                    print(task_name)
-                    print(agg_function)
-                    print(agg_tensor_name)
-                    print(agg_results)
                     self.logger.metric(f'Round {round_number}, aggregator: {task_name} '
                                        f'{agg_function} {agg_tensor_name}:\t{agg_results:.4f}')
                 else:
@@ -560,3 +548,124 @@ class Aggregator(Aggregator):
 
         # Finally, cache the updated model tensor
         self.tensor_db.cache_tensor({final_model_tk: new_model_nparray})
+
+    def get_aggregated_tensor(self, collaborator_name, tensor_name,
+                              round_number, report, tags, require_lossless):
+        """
+        RPC called by collaborator.
+
+        Performs local lookup to determine if there is an aggregated tensor available \
+            that matches the request.
+
+        Args:
+            collaborator_name : str
+                Requested tensor key collaborator name
+            tensor_name: str
+            require_lossless: bool
+            round_number: int
+            report: bool
+            tags: list[str]
+        Returns:
+            named_tensor : protobuf NamedTensor
+                the tensor requested by the collaborator
+        """
+        self.logger.debug(f'Retrieving aggregated tensor {tensor_name},{round_number},{tags} '
+                          f'for collaborator {collaborator_name}')
+
+        if 'compressed' in tags or require_lossless:
+            compress_lossless = True
+        else:
+            compress_lossless = False
+
+        # TODO the TensorDB doesn't support compressed data yet.
+        #  The returned tensor will
+        # be recompressed anyway.
+        if 'compressed' in tags:
+            tags.remove('compressed')
+        if 'lossy_compressed' in tags:
+            tags.remove('lossy_compressed')
+
+        tensor_key = TensorKey(
+            tensor_name, self.uuid, round_number, report, tuple(tags)
+        )
+        tensor_name, origin, round_number, report, tags = tensor_key
+
+        if 'aggregated' in tags and 'delta' in tags and round_number != 0:
+            agg_tensor_key = TensorKey(
+                tensor_name, origin, round_number, report, ('aggregated',)
+            )
+        else:
+            agg_tensor_key = tensor_key
+
+        nparray = self.tensor_db.get_tensor_from_cache(agg_tensor_key)
+
+        if nparray is None:
+            raise ValueError(f'Aggregator does not have an aggregated tensor for {tensor_key}')
+
+        # quite a bit happens in here, including compression, delta handling,
+        # etc...
+        # we might want to cache these as well
+        named_tensor = self._nparray_to_named_tensor(
+            agg_tensor_key,
+            nparray,
+            send_model_deltas=True,
+            compress_lossless=compress_lossless
+        )
+
+        return named_tensor
+
+    def _nparray_to_named_tensor(self, tensor_key, nparray, send_model_deltas,
+                                 compress_lossless):
+        """
+        Construct the NamedTensor Protobuf.
+
+        Also includes logic to create delta, compress tensors with the TensorCodec, etc.
+        """
+        tensor_name, origin, round_number, report, tags = tensor_key
+        # if we have an aggregated tensor, we can make a delta
+        if 'aggregated' in tags and send_model_deltas:
+            # Should get the pretrained model to create the delta. If training
+            # has happened, Model should already be stored in the TensorDB
+            model_tk = TensorKey(tensor_name,
+                                 origin,
+                                 round_number - 1,
+                                 report,
+                                 ('model',))
+
+            model_nparray = self.tensor_db.get_tensor_from_cache(model_tk)
+
+            assert (model_nparray is not None), (
+                'The original model layer should be present if the latest '
+                'aggregated model is present')
+            delta_tensor_key, delta_nparray = self.tensor_codec.generate_delta(
+                tensor_key,
+                nparray,
+                model_nparray
+            )
+            delta_comp_tensor_key, delta_comp_nparray, metadata = self.tensor_codec.compress(
+                delta_tensor_key,
+                delta_nparray,
+                lossless=compress_lossless
+            )
+            named_tensor = utils.construct_named_tensor(
+                delta_comp_tensor_key,
+                delta_comp_nparray,
+                metadata,
+                lossless=compress_lossless
+            )
+
+        else:
+            # Assume every other tensor requires lossless compression
+            compressed_tensor_key, compressed_nparray, metadata = self.tensor_codec.compress(
+                tensor_key,
+                nparray,
+                require_lossless=True
+            )
+            named_tensor = utils.construct_named_tensor(
+                compressed_tensor_key,
+                compressed_nparray,
+                metadata,
+                lossless=compress_lossless
+            )
+
+        return named_tensor

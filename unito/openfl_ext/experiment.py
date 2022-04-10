@@ -1,11 +1,11 @@
-from openfl.interface.interactive_api.experiment import FLExperiment
+import os
+from copy import deepcopy
+
 from openfl.interface.cli_helper import WORKSPACE
+from openfl.interface.interactive_api.experiment import FLExperiment
 from openfl.utilities import split_tensor_dict_for_holdouts
 
 from unito.openfl_ext.plan import Plan
-
-import os
-from copy import deepcopy
 
 
 class ModelStatus:
@@ -38,7 +38,7 @@ class FLExperiment(FLExperiment):
 
         self.logger.info('Starting experiment!')
         self.plan.resolve()
-        initial_tensor_dict = self._get_initial_tensor_dict(model_provider) if nn else None
+        initial_tensor_dict = self._get_initial_tensor_dict(model_provider)
         try:
             response = self.federation.dir_client.set_new_experiment(
                 name=self.experiment_name,
@@ -67,7 +67,7 @@ class FLExperiment(FLExperiment):
                 **self.task_runner_stub.tensor_dict_split_fn_kwargs
             )
         else:
-            tensor_dict = {'model': None}
+            tensor_dict = self.task_runner_stub.get_tensor_dict()
 
         return tensor_dict
 
@@ -121,6 +121,7 @@ class FLExperiment(FLExperiment):
         # Tasks part
         for name in task_keeper.task_registry:
             if task_keeper.task_contract[name]['optimizer'] is not None:
+                # TODO Why training is defined by the presence of the optimizer?
                 # This is training task
                 plan.config['tasks'][name] = {'function': name,
                                               'kwargs': task_keeper.task_settings[name]}

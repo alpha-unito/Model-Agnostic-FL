@@ -1,19 +1,16 @@
 """GenericTaskRunner module."""
 
-import pickle
-import tqdm
-import numpy
 from logging import getLogger
+
+import numpy
 import numpy as np
-
-from sklearn.exceptions import NotFittedError
-from sklearn.base import BaseEstimator
-from sklearn.metrics import accuracy_score
-
-from openfl.utilities import split_tensor_dict_for_holdouts
-from openfl.utilities import TensorKey
-
+import tqdm
 from openfl.federated.task.task_runner import CoreTaskRunner
+from openfl.utilities import TensorKey
+from openfl.utilities import split_tensor_dict_for_holdouts
+from sklearn.base import BaseEstimator
+from sklearn.exceptions import NotFittedError
+from sklearn.metrics import accuracy_score
 
 
 class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
@@ -62,7 +59,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
                 # Add task settings to the keyword arguments
                 task_kwargs.update(task_settings)
 
-                # Here is the training metod call
+                # Here is the training method call
                 metric_dict = callable_task(**task_kwargs)
 
                 return self._prepare_tensorkeys_for_agggregation(
@@ -72,6 +69,47 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
 
         for task_name, callable_task in self.task_provider.task_registry.items():
             self.TASK_REGISTRY[task_name] = task_binder(task_name, callable_task)
+
+    def rebuild_model(self, input_tensor_dict, validation=False, device='cpu'):
+        """
+        Parse tensor names and update weights of model. Handles the optimizer treatment.
+
+        Returns:
+            None
+        """
+        if self.opt_treatment == 'RESET':
+            self.reset_opt_vars()
+            self.set_tensor_dict(input_tensor_dict, with_opt_vars=False, device=device)
+        elif (self.training_round_completed
+              and self.opt_treatment == 'CONTINUE_GLOBAL' and not validation):
+            self.set_tensor_dict(input_tensor_dict, with_opt_vars=True, device=device)
+        else:
+            self.set_tensor_dict(input_tensor_dict, with_opt_vars=False, device=device)
+
+    def set_tensor_dict(self, tensor_dict, with_opt_vars=False, device='cpu',
+                        nn=False):  # TODO nn should be passed from above
+        """Set the tensor dictionary.
+
+        Args:
+            tensor_dict: The tensor dictionary
+            with_opt_vars (bool): Return the tensor dictionary including the
+                                  optimizer tensors (Default=False)
+
+        """
+        # Sets tensors for model layers and optimizer state.
+        # FIXME: self.parameters() instead? Unclear if load_state_dict() or
+        #  simple assignment is better
+        # for now, state dict gives us names, which is good
+        # FIXME: do both and sanity check each time?
+        if nn:
+            args = [self.model, tensor_dict]
+            if with_opt_vars:
+                args.append(self.optimizer)
+
+            kwargs = {'device': device, }
+            self.framework_adapter.set_tensor_dict(*args, **kwargs)
+        else:
+            self.model = tensor_dict['generic_model']
 
     def _prepare_tensorkeys_for_agggregation(self, metric_dict, validation_flag,
                                              col_name, round_num, nn=False):  # TODO This should be in the plan file
@@ -91,7 +129,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
             global_model_dict, local_model_dict = split_tensor_dict_for_holdouts(
                 self.logger, output_model_dict,
                 **self.tensor_dict_split_fn_kwargs
-            )
+            ) if nn else output_model_dict, output_model_dict
 
             # Create global tensorkeys
             global_tensorkey_model_dict = {
@@ -124,7 +162,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
             # on random data to get the optimizer names,
             # and then throwing away the model.
             if self.opt_treatment == 'CONTINUE_GLOBAL':
-                self.initialize_tensorkeys_for_functions(with_opt_vars=True)
+                self.initialize_tensorkeys_for_functions(with_opt_vars=True if nn else False)
 
             # This will signal that the optimizer values are now present,
             # and can be loaded when the model is rebuilt
@@ -318,49 +356,85 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
         Returns:
             None
         """
-        if nn:
-            # TODO: Framework adapters should have separate methods for dealing with optimizer
-            # Set model dict for validation tasks
-            output_model_dict = self.get_tensor_dict(with_opt_vars=False)
-            global_model_dict_val, local_model_dict_val = split_tensor_dict_for_holdouts(
-                self.logger,
-                output_model_dict,
+        # TODO: Framework adapters should have separate methods for dealing with optimizer
+        # Set model dict for validation tasks
+        output_model_dict = self.get_tensor_dict(with_opt_vars=False)
+
+        global_model_dict_val, local_model_dict_val = split_tensor_dict_for_holdouts(
+            self.logger,
+            output_model_dict,
+            **self.tensor_dict_split_fn_kwargs
+        ) if nn else output_model_dict, output_model_dict
+        # Now set model dict for training tasks
+        if with_opt_vars:
+            output_model_dict = self.get_tensor_dict(with_opt_vars=True)
+            global_model_dict, local_model_dict = split_tensor_dict_for_holdouts(
+                self.logger, output_model_dict,
                 **self.tensor_dict_split_fn_kwargs
             )
-            # Now set model dict for training tasks
-            if with_opt_vars:
-                output_model_dict = self.get_tensor_dict(with_opt_vars=True)
-                global_model_dict, local_model_dict = split_tensor_dict_for_holdouts(
-                    self.logger, output_model_dict,
-                    **self.tensor_dict_split_fn_kwargs
-                )
-            else:
-                global_model_dict = global_model_dict_val
-                local_model_dict = local_model_dict_val
-
-            self.required_tensorkeys_for_function['global_model_dict'] = global_model_dict
-            self.required_tensorkeys_for_function['local_model_dict'] = local_model_dict
-            self.required_tensorkeys_for_function['global_model_dict_val'] = global_model_dict_val
-            self.required_tensorkeys_for_function['local_model_dict_val'] = local_model_dict_val
         else:
-            model = self.get_tensor_dict(with_opt_vars=False)
+            global_model_dict = global_model_dict_val
+            local_model_dict = local_model_dict_val
 
-            self.required_tensorkeys_for_function['global_model_dict'] = model
-            self.required_tensorkeys_for_function['local_model_dict'] = model
-            self.required_tensorkeys_for_function['global_model_dict_val'] = model
-            self.required_tensorkeys_for_function['local_model_dict_val'] = model
+        self.required_tensorkeys_for_function['global_model_dict'] = global_model_dict
+        self.required_tensorkeys_for_function['local_model_dict'] = local_model_dict
+        self.required_tensorkeys_for_function['global_model_dict_val'] = global_model_dict_val
+        self.required_tensorkeys_for_function['local_model_dict_val'] = local_model_dict_val
 
     def get_required_tensorkeys_for_function(self, func_name, **kwargs):
         """
-        When running a task, a map of named tensorkeys \
-            must be provided to the function as dependencies.
+        Get the required tensors for specified function that could be called as part of a task.
 
-        Returns:
-            list: (TensorKey(tensor_name, origin, round_number))
+        By default, this is just all of the layers and optimizer of the model.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        List
+            [TensorKey]
         """
-        raise NotImplementedError
+        # We rely on validation type tasks parameter `apply`
+        # In the interface layer we add those parameters automatically
+        if 'apply' not in kwargs:
+            return [
+                       TensorKey(tensor_name, 'GLOBAL', 0, False, ('model',))
+                       for tensor_name in self.required_tensorkeys_for_function['global_model_dict']
+                   ] + [
+                       TensorKey(tensor_name, 'LOCAL', 0, False, ('model',))
+                       for tensor_name in self.required_tensorkeys_for_function['local_model_dict']
+                   ]
 
-    def get_tensor_dict(self, with_opt_vars):
+        if kwargs['apply'] == 'local':
+            return [
+                TensorKey(tensor_name, 'LOCAL', 0, False, ('trained',))
+                for tensor_name in {
+                    **self.required_tensorkeys_for_function['local_model_dict_val'],
+                    **self.required_tensorkeys_for_function['global_model_dict_val']
+                }
+            ]
+
+        elif kwargs['apply'] == 'global':
+            return [
+                       TensorKey(tensor_name, 'GLOBAL', 0, False, ('model',))
+                       for tensor_name in self.required_tensorkeys_for_function['global_model_dict_val']
+                   ] + [
+                       TensorKey(tensor_name, 'LOCAL', 0, False, ('model',))
+                       for tensor_name in self.required_tensorkeys_for_function['local_model_dict_val']
+                   ]
+
+    def set_model_provider(self, model_provider):
+        """Retrieve a model and an optimizer from the interface object."""
+        self.model_provider = model_provider
+        self.model = self.model_provider.provide_model()
+        self.optimizer = self.model_provider.provide_optimizer()
+
+    def get_model(self):
+        return self.model_provider.provide_model()
+
+    def get_tensor_dict(self, with_opt_vars=False):
         """
         Get the weights.
 
@@ -372,7 +446,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
             dict: The weight dictionary {<tensor_name>: <value>}
         """
 
-        return pickle.dumps(self.model)
+        return {'generic_model': self.model}
 
     def reset_opt_vars(self):
         """Reinitialize the optimizer variables."""

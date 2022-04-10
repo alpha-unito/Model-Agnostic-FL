@@ -16,7 +16,7 @@ DEFAULT_RETRY_TIMEOUT_IN_SECONDS = 5
 class Envoy(Envoy):
 
     def start(self):
-        """Start the envoy."""
+        """Start the envoy_1."""
         try:
             is_accepted = self.director_client.report_shard_info(
                 shard_descriptor=self.shard_descriptor,
@@ -34,7 +34,7 @@ class Envoy(Envoy):
                 logger.error('Report shard info was not accepted')
 
     def run(self):
-        """Run of the envoy working cycle."""
+        """Run of the envoy_1 working cycle."""
         while True:
             try:
                 # Workspace import should not be done by gRPC client!

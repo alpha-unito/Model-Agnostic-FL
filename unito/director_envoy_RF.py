@@ -1,12 +1,11 @@
 import numpy as np
 from openfl.interface.interactive_api.experiment import TaskInterface, ModelInterface
+from sklearn.metrics import accuracy_score
 
+from IrisDataset import IrisDataset
+from MyModel import MyRandomForestClassifier
 from unito.openfl_ext.experiment import FLExperiment
 from unito.openfl_ext.federation import Federation
-
-from MyModel import MyRandomForestClassifier
-from IrisDataset import IrisDataset
-from sklearn.metrics import accuracy_score
 
 random_state = np.random.RandomState(31415)
 
@@ -17,10 +16,9 @@ director_node_fqdn = 'localhost'
 task_interface = TaskInterface()
 
 
-@task_interface.register_fl_task(model='model', data_loader='train_loader', device='device')
-def train(model, train_loader, device):
+@task_interface.register_fl_task(model='model', data_loader='train_loader', device='device', optimizer='optimizer')
+def train(model, train_loader, device, optimizer):
     X, y = train_loader
-
     model.fit(X, y)
     pred = model.predict(X)
     metric = accuracy_score(pred, y, normalize=True)
@@ -41,7 +39,8 @@ def validate(model, val_loader, device):
 federation = Federation(client_id=client_id, director_node_fqdn=director_node_fqdn, director_port='50052', tls=False)
 fl_experiment = FLExperiment(federation=federation, experiment_name="federated_RF",
                              serializer_plugin='openfl.plugins.interface_serializer.dill_serializer.DillSerializer')  # Perché non lo prende dal plan?
-model_interface = ModelInterface(model=MyRandomForestClassifier(), optimizer=None,
+model = MyRandomForestClassifier()
+model_interface = ModelInterface(model=model, optimizer=None,
                                  framework_plugin='openfl_ext.generic_adapter.GenericAdapter')
 federated_dataset = IrisDataset(random_state=random_state)
 
@@ -56,3 +55,4 @@ fl_experiment.start(
 )
 
 fl_experiment.stream_metrics(tensorboard_logs=False)
+fl_experiment.remove_experiment_data()

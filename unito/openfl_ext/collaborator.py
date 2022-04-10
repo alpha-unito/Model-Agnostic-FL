@@ -1,11 +1,12 @@
-from openfl.component.collaborator import Collaborator
-from openfl.component.collaborator.collaborator import OptTreatment
-from openfl.component.collaborator.collaborator import DevicePolicy
-from openfl.pipelines import NoCompressionPipeline
-from openfl.utilities import TensorKey
 from logging import getLogger
 from time import sleep
+
+from openfl.component.collaborator import Collaborator
+from openfl.component.collaborator.collaborator import DevicePolicy
+from openfl.component.collaborator.collaborator import OptTreatment
+from openfl.pipelines import NoCompressionPipeline
 from openfl.protocols import utils
+from openfl.utilities import TensorKey
 
 from unito.openfl_ext.tensor_codec import TensorCodec
 from unito.openfl_ext.tensor_db import TensorDB
@@ -137,43 +138,39 @@ class Collaborator(Collaborator):
                                  f'for round {round_number}...')
                 break
 
-    # TODO This is clearly not right
     def do_task(self, task, round_number):
         """Do the specified task."""
         # map this task to an actual function name and kwargs
         func_name = self.task_config[task]['function']
         kwargs = self.task_config[task]['kwargs']
 
-        if self.nn:
-            # this would return a list of what tensors we require as TensorKeys
-            required_tensorkeys_relative = self.task_runner.get_required_tensorkeys_for_function(
-                func_name,
-                **kwargs
+        # this would return a list of what tensors we require as TensorKeys
+        required_tensorkeys_relative = self.task_runner.get_required_tensorkeys_for_function(
+            func_name,
+            **kwargs
+        )
+
+        # models actually return "relative" tensorkeys of (name, LOCAL|GLOBAL,
+        # round_offset)
+        # so we need to update these keys to their "absolute values"
+        required_tensorkeys = []
+        for tname, origin, rnd_num, report, tags in required_tensorkeys_relative:
+            if origin == 'GLOBAL':
+                origin = self.aggregator_uuid
+            else:
+                origin = self.collaborator_name
+
+            # rnd_num is the relative round. So if rnd_num is -1, get the
+            # tensor from the previous round
+            required_tensorkeys.append(
+                TensorKey(tname, origin, rnd_num + round_number, report, tags)
             )
 
-            # models actually return "relative" tensorkeys of (name, LOCAL|GLOBAL,
-            # round_offset)
-            # so we need to update these keys to their "absolute values"
-            required_tensorkeys = []
-            for tname, origin, rnd_num, report, tags in required_tensorkeys_relative:
-                if origin == 'GLOBAL':
-                    origin = self.aggregator_uuid
-                else:
-                    origin = self.collaborator_name
-
-                # rnd_num is the relative round. So if rnd_num is -1, get the
-                # tensor from the previous round
-                required_tensorkeys.append(
-                    TensorKey(tname, origin, rnd_num + round_number, report, tags)
-                )
-
-            # print('Required tensorkeys = {}'.format(
-            # [tk[0] for tk in required_tensorkeys]))
-            input_tensor_dict = self.get_numpy_dict_for_tensorkeys(
-                required_tensorkeys
-            )
-        else:
-            input_tensor_dict = {"model": None}
+        # print('Required tensorkeys = {}'.format(
+        # [tk[0] for tk in required_tensorkeys]))
+        input_tensor_dict = self.get_numpy_dict_for_tensorkeys(
+            required_tensorkeys
+        )
 
         # now we have whatever the model needs to do the task
         if hasattr(self.task_runner, 'TASK_REGISTRY'):
@@ -301,3 +298,172 @@ class Collaborator(Collaborator):
         )
 
         return named_tensor
+
+    def get_numpy_dict_for_tensorkeys(self, tensor_keys):
+        """Get tensor dictionary for specified tensorkey set."""
+        return {k.tensor_name: self.get_data_for_tensorkey(k) for k in tensor_keys}
+
+    def get_data_for_tensorkey(self, tensor_key):
+        """
+        Resolve the tensor corresponding to the requested tensorkey.
+
+        Args
+        ----
+        tensor_key:         Tensorkey that will be resolved locally or
+                            remotely. May be the product of other tensors
+        """
+        # try to get from the store
+        tensor_name, origin, round_number, report, tags = tensor_key
+        self.logger.debug(f'Attempting to retrieve tensor {tensor_key} from local store')
+        nparray = self.tensor_db.get_tensor_from_cache(tensor_key)
+
+        # if None and origin is our client, request it from the client
+        if nparray is None:
+            if origin == self.collaborator_name:
+                self.logger.info(
+                    f'Attempting to find locally stored {tensor_name} tensor from prior round...'
+                )
+                prior_round = round_number - 1
+                while prior_round >= 0:
+                    nparray = self.tensor_db.get_tensor_from_cache(
+                        TensorKey(tensor_name, origin, prior_round, report, tags))
+                    if nparray is not None:
+                        self.logger.debug(f'Found tensor {tensor_name} in local TensorDB '
+                                          f'for round {prior_round}')
+                        return nparray
+                    prior_round -= 1
+                self.logger.info(
+                    f'Cannot find any prior version of tensor {tensor_name} locally...'
+                )
+            self.logger.debug('Unable to get tensor from local store...'
+                              'attempting to retrieve from client')
+            # Determine whether there are additional compression related
+            # dependencies.
+            # Typically, dependencies are only relevant to model layers
+            tensor_dependencies = self.tensor_codec.find_dependencies(
+                tensor_key, self.delta_updates
+            )
+            if len(tensor_dependencies) > 0:
+                # Resolve dependencies
+                # tensor_dependencies[0] corresponds to the prior version
+                # of the model.
+                # If it exists locally, should pull the remote delta because
+                # this is the least costly path
+                prior_model_layer = self.tensor_db.get_tensor_from_cache(
+                    tensor_dependencies[0]
+                )
+                if prior_model_layer is not None:
+                    uncompressed_delta = self.get_aggregated_tensor_from_aggregator(
+                        tensor_dependencies[1]
+                    )
+                    new_model_tk, nparray = self.tensor_codec.apply_delta(
+                        tensor_dependencies[1],
+                        uncompressed_delta,
+                        prior_model_layer,
+                        creates_model=True,
+                    )
+                    self.tensor_db.cache_tensor({new_model_tk: nparray})
+                else:
+                    self.logger.info('Count not find previous model layer.'
+                                     'Fetching latest layer from aggregator')
+                    # The original model tensor should be fetched from client
+                    nparray = self.get_aggregated_tensor_from_aggregator(
+                        tensor_key,
+                        require_lossless=True
+                    )
+            elif 'model' in tags:
+                # Pulling the model for the first time
+                nparray = self.get_aggregated_tensor_from_aggregator(
+                    tensor_key,
+                    require_lossless=True
+                )
+        else:
+            self.logger.debug(f'Found tensor {tensor_key} in local TensorDB')
+
+        return nparray
+
+    def get_aggregated_tensor_from_aggregator(self, tensor_key,
+                                              require_lossless=False):
+        """
+        Return the decompressed tensor associated with the requested tensor key.
+
+        If the key requests a compressed tensor (in the tag), the tensor will
+        be decompressed before returning
+        If the key specifies an uncompressed tensor (or just omits a compressed
+        tag), the decompression operation will be skipped
+
+        Args
+        ----
+        tensor_key  :               The requested tensor
+        require_lossless:   Should compression of the tensor be allowed
+                                    in flight?
+                                    For the initial model, it may affect
+                                    convergence to apply lossy
+                                    compression. And metrics shouldn't be
+                                    compressed either
+
+        Returns
+        -------
+        nparray     : The decompressed tensor associated with the requested
+                      tensor key
+        """
+        tensor_name, origin, round_number, report, tags = tensor_key
+
+        self.logger.debug(f'Requesting aggregated tensor {tensor_key}')
+        tensor = self.client.get_aggregated_tensor(
+            self.collaborator_name, tensor_name, round_number, report, tags, require_lossless)
+
+        # this translates to a numpy array and includes decompression, as
+        # necessary
+        nparray = self.named_tensor_to_nparray(tensor)
+
+        # cache this tensor
+        self.tensor_db.cache_tensor({tensor_key: nparray})
+
+        return nparray
+
+    def named_tensor_to_nparray(self, named_tensor):
+        """Convert named tensor to a numpy array."""
+        # do the stuff we do now for decompression and frombuffer and stuff
+        # This should probably be moved back to protoutils
+        raw_bytes = named_tensor.data_bytes
+        metadata = [{'int_to_float': proto.int_to_float,
+                     'int_list': proto.int_list,
+                     'bool_list': proto.bool_list,
+                     'model': proto.model,
+                     } for proto in named_tensor.transformer_metadata]
+        # The tensor has already been transfered to collaborator, so
+        # the newly constructed tensor should have the collaborator origin
+        tensor_key = TensorKey(
+            named_tensor.name,
+            self.collaborator_name,
+            named_tensor.round_number,
+            named_tensor.report,
+            tuple(named_tensor.tags)
+        )
+        tensor_name, origin, round_number, report, tags = tensor_key
+        if 'compressed' in tags:
+            decompressed_tensor_key, decompressed_nparray = self.tensor_codec.decompress(
+                tensor_key,
+                data=raw_bytes,
+                transformer_metadata=metadata,
+                require_lossless=True
+            )
+        elif 'lossy_compressed' in tags:
+            decompressed_tensor_key, decompressed_nparray = self.tensor_codec.decompress(
+                tensor_key,
+                data=raw_bytes,
+                transformer_metadata=metadata
+            )
+        else:
+            # There could be a case where the compression pipeline is bypassed
+            # entirely
+            self.logger.warning('Bypassing tensor codec...')
+            decompressed_tensor_key = tensor_key
+            decompressed_nparray = raw_bytes
+
+        self.tensor_db.cache_tensor(
+            {decompressed_tensor_key: decompressed_nparray}
+        )
+
+        return decompressed_nparray

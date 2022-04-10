@@ -118,4 +118,4 @@ class Experiment(Experiment):
         finally:
             grpc_server.stop(0)
             # Temporary solution to free RAM used by TensorDB
-            aggregator_grpc_server.aggregator.tensor_db.clean_up(0)  # TODO this is gonna crash if no envoy is active
+            aggregator_grpc_server.aggregator.tensor_db.clean_up(0)  # TODO this is gonna crash if no envoy_1 is active
