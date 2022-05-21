@@ -1,7 +1,7 @@
 import os
 from copy import deepcopy
+from pathlib import Path
 
-from openfl.interface.cli_helper import WORKSPACE
 from openfl.interface.interactive_api.experiment import FLExperiment
 from openfl.utilities import split_tensor_dict_for_holdouts
 
@@ -84,8 +84,10 @@ class FLExperiment(FLExperiment):
         os.makedirs('./plan', exist_ok=True)
         os.makedirs('./save', exist_ok=True)
         # Load the default plan
-        base_plan_path = WORKSPACE / 'workspace/plan/plans/default/base_plan_interactive_api.yaml'
-        plan = Plan.parse(base_plan_path, resolve=False)
+        # base_plan_path = WORKSPACE / 'workspace/plan/plans/default/base_plan_interactive_api.yaml'
+        # plan = Plan.parse(base_plan_path, resolve=False)
+        plan = Plan.parse(Path("./plan/plan.yaml"),
+                          resolve=False)  # TODO Why do you want to overwrite the plan every time with its default?
         # Change plan name to default one
         plan.name = 'plan.yaml'
 
@@ -119,22 +121,25 @@ class FLExperiment(FLExperiment):
             plan.config['data_loader']['settings'][setting] = value
 
         # Tasks part
-        for name in task_keeper.task_registry:
-            if task_keeper.task_contract[name]['optimizer'] is not None:
-                # TODO Why training is defined by the presence of the optimizer?
-                # This is training task
-                plan.config['tasks'][name] = {'function': name,
-                                              'kwargs': task_keeper.task_settings[name]}
-            else:
-                # This is a validation type task (not altering the model state)
-                for name_prefix, apply_kwarg in zip(['localy_tuned_model_', 'aggregated_model_'],
-                                                    ['local', 'global']):
-                    # We add two entries for this task: for local and global models
-                    task_kwargs = deepcopy(task_keeper.task_settings[name])
-                    task_kwargs.update({'apply': apply_kwarg})
-                    plan.config['tasks'][name_prefix + name] = {
-                        'function': name,
-                        'kwargs': task_kwargs}
+        # @TODO This is the responsable for the overriding of the provided plan - should be integrated in a smarter way
+        # @TODO this piece of code gives problems, puts the entries in the config file in alphabetical order
+        #for name in task_keeper.task_registry:
+        #    if task_keeper.task_contract[name]['optimizer'] is not None:
+        #        # TODO Why training is defined by the presence of the optimizer?
+        #        # This is training task
+        #        plan.config['tasks'][name] = {'function': name,
+        #                                      'kwargs': task_keeper.task_settings[name]}
+        #
+        #    else:
+        #        # This is a validation type task (not altering the model state)
+        #        for name_prefix, apply_kwarg in zip(['localy_tuned_model_', 'aggregated_model_'],
+        #                                            ['local', 'global']):
+        #            # We add two entries for this task: for local and global models
+        #            task_kwargs = deepcopy(task_keeper.task_settings[name])
+        #            task_kwargs.update({'apply': apply_kwarg})
+        #            plan.config['tasks'][name_prefix + name] = {
+        #                'function': name,
+        #                'kwargs': task_kwargs}
 
         # TaskRunner framework plugin
         # ['required_plugin_components'] should be already in the default plan with all the fields

@@ -364,7 +364,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
             self.logger,
             output_model_dict,
             **self.tensor_dict_split_fn_kwargs
-        ) if nn else output_model_dict, output_model_dict
+        ) if nn else output_model_dict, {}
         # Now set model dict for training tasks
         if with_opt_vars:
             output_model_dict = self.get_tensor_dict(with_opt_vars=True)
@@ -381,7 +381,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
         self.required_tensorkeys_for_function['global_model_dict_val'] = global_model_dict_val
         self.required_tensorkeys_for_function['local_model_dict_val'] = local_model_dict_val
 
-    def get_required_tensorkeys_for_function(self, func_name, **kwargs):
+    def get_required_tensorkeys_for_function(self, func_name, nn=False, **kwargs):
         """
         Get the required tensors for specified function that could be called as part of a task.
 

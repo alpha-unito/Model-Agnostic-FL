@@ -1,7 +1,7 @@
-from openfl.databases import TensorDB
-from openfl.utilities import TensorKey
-from openfl.utilities import LocalTensor
 import numpy as np
+from openfl.databases import TensorDB
+from openfl.utilities import LocalTensor
+from openfl.utilities import TensorKey
 
 
 class TensorDB(TensorDB):

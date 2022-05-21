@@ -111,7 +111,7 @@ class Collaborator(Collaborator):
                     self.do_task(task, round_number)
 
                 # Cleaning tensor db
-                self.tensor_db.clean_up(self.db_store_rounds)
+                self.tensor_db.clean_up(self.db_store_rounds + 1)
 
         self.logger.info('End of Federation reached. Exiting...')
 
@@ -145,8 +145,10 @@ class Collaborator(Collaborator):
         kwargs = self.task_config[task]['kwargs']
 
         # this would return a list of what tensors we require as TensorKeys
+        # @TODO: nn should be passed from above
         required_tensorkeys_relative = self.task_runner.get_required_tensorkeys_for_function(
             func_name,
+            nn=False,
             **kwargs
         )
 
@@ -180,7 +182,7 @@ class Collaborator(Collaborator):
             self.logger.info('Using Interactive Python API')
 
             # So far 'kwargs' contained parameters read from the plan
-            # those are parameters that the eperiment owner registered for
+            # those are parameters that the experiment owner registered for
             # the task.
             # There is another set of parameters that created on the
             # collaborator side, for instance, local processing unit identifier:s

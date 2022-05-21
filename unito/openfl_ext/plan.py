@@ -107,7 +107,6 @@ class Plan(Plan):
                                   extra={'markup': True})
             raise
 
-    # TODO Why the plan is overridden by the default one?
     def get_aggregator(self, tensor_dict=None):
         """Get federation aggregator."""
         defaults = self.config.get('aggregator',
@@ -115,13 +114,12 @@ class Plan(Plan):
                                        TEMPLATE: 'openfl.component.Aggregator',
                                        SETTINGS: {}
                                    })
-        defaults['template'] = 'unito.openfl_ext.aggregator.Aggregator'  # TODO this should be in the plan file
+
         defaults[SETTINGS]['aggregator_uuid'] = self.aggregator_uuid
         defaults[SETTINGS]['federation_uuid'] = self.federation_uuid
         defaults[SETTINGS]['authorized_cols'] = self.authorized_cols
         defaults[SETTINGS]['assigner'] = self.get_assigner()
         defaults[SETTINGS]['compression_pipeline'] = self.get_tensor_pipe()
-        defaults[SETTINGS]['nn'] = False  # TODO this should be in the plan file
         log_metric_callback = defaults[SETTINGS].get('log_metric_callback')
 
         if log_metric_callback:
@@ -138,7 +136,7 @@ class Plan(Plan):
         return self.aggregator_
 
     def get_collaborator(self, collaborator_name, root_certificate=None, private_key=None,
-                         certificate=None, task_runner=None, client=None, shard_descriptor=None, nn=False):
+                         certificate=None, task_runner=None, client=None, shard_descriptor=None):
         """Get collaborator."""
         defaults = self.config.get(
             'collaborator',
@@ -147,11 +145,9 @@ class Plan(Plan):
                 SETTINGS: {}
             }
         )
-        defaults['template'] = 'unito.openfl_ext.collaborator.Collaborator'  # TODO this should be in the plan file
         defaults[SETTINGS]['collaborator_name'] = collaborator_name
         defaults[SETTINGS]['aggregator_uuid'] = self.aggregator_uuid
         defaults[SETTINGS]['federation_uuid'] = self.federation_uuid
-        defaults[SETTINGS]['nn'] = nn  # TODO this should be in the plan file
 
         if task_runner is not None:
             defaults[SETTINGS]['task_runner'] = task_runner
@@ -161,7 +157,9 @@ class Plan(Plan):
             # a part of the New API and it is a part of OpenFL kernel.
             # If Task Runner is placed elsewhere, somewhere in user workspace, than it is
             # a part of the old interface and we follow legacy initialization procedure.
-            if 'openfl.federated.task.task_runner' in self.config['task_runner']['template']:
+            # TODO This is not general
+            if 'openfl.federated.task.task_runner' in self.config['task_runner']['template'] or \
+                    'unito.openfl_ext.runner_generic.GenericTaskRunner' in self.config['task_runner']['template']:
                 # Interactive API
                 model_provider, task_keeper, data_loader = self.deserialize_interface_objects()
                 data_loader = self.initialize_data_loader(data_loader, shard_descriptor)
@@ -203,10 +201,6 @@ class Plan(Plan):
                 TEMPLATE: 'openfl.federated.task.task_runner.CoreTaskRunner',
                 SETTINGS: {}
             })
-
-        defaults[
-            'template'] = 'unito.openfl_ext.runner_generic.GenericTaskRunner'  # TODO this should be in the plan file
-        # We are importing a CoreTaskRunner instance!!!
         if self.runner_ is None:
             self.runner_ = Plan.build(**defaults)
 
@@ -233,8 +227,7 @@ class Plan(Plan):
                 SETTINGS: {}
             }
         )
-        defaults[
-            'template'] = 'unito.openfl_ext.generic_pipeline.GenericPipeline'  # TODO this should be in the plan file
+
         if self.pipe_ is None:
             self.pipe_ = Plan.build(**defaults)
 

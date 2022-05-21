@@ -7,9 +7,7 @@ from openfl.protocols import ModelProto
 from openfl.protocols import utils
 from openfl.utilities import TaskResultKey
 from openfl.utilities import TensorKey
-from openfl.utilities.logs import write_metric
 
-from unito.openfl_ext.aggregate_random_forest import AggregateRandomForest
 from unito.openfl_ext.tensor_codec import TensorCodec
 from unito.openfl_ext.tensor_db import TensorDB
 
@@ -112,7 +110,7 @@ class Aggregator(Aggregator):
 
         self.collaborator_task_weight = {}  # {TaskResultKey: data_size}
 
-        self.log_metric = write_metric
+        # self.log_metric = write_metric
 
     def send_local_task_results(self, collaborator_name, round_number, task_name,
                                 data_size, named_tensors):
@@ -172,8 +170,8 @@ class Aggregator(Aggregator):
                     'metric_name': tensor_key.tensor_name,
                     'metric_value': nparray,
                     'round': round_number}
-                self.log_metric(tensor_key.tags[-1], task_name,
-                                tensor_key.tensor_name, nparray, round_number)
+                # self.log_metric(tensor_key.tags[-1], task_name,
+                #                tensor_key.tensor_name, nparray, round_number)
                 self.logger.metric(f'Round {round_number}, collaborator {tensor_key.tags[-1]} '
                                    f'{task_name} result {tensor_key.tensor_name}:\t{nparray}')
                 self.metric_queue.put(metric_dict)
@@ -298,9 +296,9 @@ class Aggregator(Aggregator):
         """
         if self._is_task_done(task_name):
             # now check for the end of the round
-            self._end_of_round_check()
+            self._end_of_round_check(task_name)
 
-    def _end_of_round_check(self):
+    def _end_of_round_check(self, task_name):
         """
         Check if the round complete.
 
@@ -311,6 +309,7 @@ class Aggregator(Aggregator):
         Returns:
             None
         """
+
         if not self._is_round_done():
             return
 
@@ -320,7 +319,6 @@ class Aggregator(Aggregator):
             self._compute_validation_related_task_metrics(task_name)
 
         # Once all of the task results have been processed
-        # Increment the round number
         self.round_number += 1
 
         # Save the latest model
@@ -378,8 +376,8 @@ class Aggregator(Aggregator):
             new_tags = tuple(tags[:-1])
             agg_tensor_key = TensorKey(tensor_name, origin, round_number, report, new_tags)
             agg_tensor_name, agg_origin, agg_round_number, agg_report, agg_tags = agg_tensor_key
-            agg_function = WeightedAverage() if 'metric' in tags else (
-                task_agg_function if self.nn else AggregateRandomForest())
+            # TODO: This if can be removed (maybe) (with a well-configurated plan)
+            agg_function = WeightedAverage() if 'metric' in tags else task_agg_function
             agg_results = self.tensor_db.get_aggregated_tensor(
                 agg_tensor_key, collaborator_weight_dict, aggregation_function=agg_function)
             if report:
@@ -397,12 +395,12 @@ class Aggregator(Aggregator):
                         f'for round {self.round_number}. Skipping reporting for this round')
                 if agg_function:
                     self.logger.metric(f'Round {round_number}, aggregator: {task_name} '
-                                       f'{agg_function} {agg_tensor_name}:\t{agg_results:.4f}')
+                                       f'{agg_function} {agg_tensor_name}:\t{agg_results}')
                 else:
                     self.logger.metric(f'Round {round_number}, aggregator: {task_name} '
-                                       f'{agg_tensor_name}:\t{agg_results:.4f}')
-                self.log_metric('Aggregator', task_name, tensor_key.tensor_name,
-                                agg_results, round_number)
+                                       f'{agg_tensor_name}:\t{agg_results}')
+                # self.log_metric('Aggregator', task_name, tensor_key.tensor_name,
+                #                agg_results, round_number)
                 self.metric_queue.put(metric_dict)
                 # TODO Add all of the logic for saving the model based
                 #  on best accuracy, lowest loss, etc.
@@ -411,7 +409,7 @@ class Aggregator(Aggregator):
                     # potentially save it
                     if self.best_model_score is None or self.best_model_score < agg_results:
                         self.logger.metric(f'Round {round_number}: saved the best '
-                                           f'model with score {agg_results:f}')
+                                           f'model with score {agg_results}')
                         self.best_model_score = agg_results
                         self._save_model(round_number, self.best_state_path)
             if 'trained' in tags:
@@ -451,6 +449,7 @@ class Aggregator(Aggregator):
             self.last_tensor_dict = tensor_dict
         self.model = utils.construct_model_proto(
             tensor_dict, round_number, self.compression_pipeline)
+
         utils.dump_proto(self.model, file_path)
 
     def _prepare_trained(self, tensor_name, origin, round_number, report, agg_results):
