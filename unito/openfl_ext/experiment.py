@@ -3,6 +3,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from openfl.interface.interactive_api.experiment import FLExperiment
+from openfl.interface.interactive_api.experiment import TaskInterface
 from openfl.utilities import split_tensor_dict_for_holdouts
 
 from unito.openfl_ext.plan import Plan
@@ -123,7 +124,7 @@ class FLExperiment(FLExperiment):
         # Tasks part
         # @TODO This is the responsable for the overriding of the provided plan - should be integrated in a smarter way
         # @TODO this piece of code gives problems, puts the entries in the config file in alphabetical order
-        #for name in task_keeper.task_registry:
+        # for name in task_keeper.task_registry:
         #    if task_keeper.task_contract[name]['optimizer'] is not None:
         #        # TODO Why training is defined by the presence of the optimizer?
         #        # This is training task
@@ -168,3 +169,63 @@ class FLExperiment(FLExperiment):
                 and 'function' in plan.config['tasks'][entry])
         ]
         self.plan = deepcopy(plan)
+
+
+class TaskInterface(TaskInterface):
+    """
+    Task keeper class.
+
+    Task should accept the following entities that exist on collaborator nodes:
+    1. model - will be rebuilt with relevant weights for every task by `TaskRunner`
+    2. data_loader - data loader equipped with `repository adapter` that provides local data
+    3. device - a device to be used on collaborator machines
+    4. optimizer (optional)
+
+    Task returns a dictionary {metric name: metric value for this task}
+    """
+
+    # @TODO: too much ad-hoc
+    def register_fl_task(self, model, data_loader, device, optimizer=None, adaboost_coeff=None):
+        """
+        Register FL tasks.
+
+        The task contract should be set up by providing variable names:
+        [model, data_loader, device] - necessarily
+        and optimizer - optionally
+
+        All tasks should accept contract entities to be run on collaborator node.
+        Moreover we ask users return dict{'metric':value} in every task
+        `
+        TI = TaskInterface()
+
+        task_settings = {
+            'batch_size': 32,
+            'some_arg': 228,
+        }
+        @TI.add_kwargs(**task_settings)
+        @TI.register_fl_task(model='my_model', data_loader='train_loader',
+                device='device', optimizer='my_Adam_opt')
+        def foo_task(my_model, train_loader, my_Adam_opt, device, batch_size, some_arg=356)
+            ...
+        `
+        """
+
+        # The highest level wrapper for allowing arguments for the decorator
+        def decorator_with_args(training_method):
+            # We could pass hooks to the decorator
+            # @functools.wraps(training_method)
+
+            def wrapper_decorator(**task_keywords):
+                metric_dict = training_method(**task_keywords)
+                return metric_dict
+
+            # Saving the task and the contract for later serialization
+            self.task_registry[training_method.__name__] = wrapper_decorator
+            contract = {'model': model, 'data_loader': data_loader,
+                        'device': device, 'optimizer': optimizer,
+                        'adaboost_coeff': adaboost_coeff}
+            self.task_contract[training_method.__name__] = contract
+            # We do not alter user environment
+            return training_method
+
+        return decorator_with_args

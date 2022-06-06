@@ -113,3 +113,12 @@ class TensorDB(TensorDB):
             result = df['nparray'].iloc[0]
 
         return result
+
+    # @TODO: this is also to be generalised
+    def get_errors(self, round_number):
+        df = self.tensor_db[(self.tensor_db['tensor_name'] == "errors")
+                            & (self.tensor_db['round'] == round_number)]
+
+        if len(df) == 0:
+            return None
+        return df["nparray"].to_numpy()

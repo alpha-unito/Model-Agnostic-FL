@@ -3,8 +3,10 @@ from pathlib import Path
 
 from openfl.federated.plan import Plan
 from openfl.interface.cli_helper import WORKSPACE
-from openfl.transport import AggregatorGRPCServer
 from yaml import dump
+
+from unito.openfl_ext.client import CollaboratorGRPCClient
+from unito.openfl_ext.server import AggregatorGRPCServer
 
 SETTINGS = 'settings'
 TEMPLATE = 'template'
@@ -191,6 +193,31 @@ class Plan(Plan):
 
         return self.collaborator_
 
+    def get_client(self, collaborator_name, aggregator_uuid, federation_uuid,
+                   root_certificate=None, private_key=None, certificate=None):
+        """Get gRPC client for the specified collaborator."""
+        common_name = collaborator_name
+        if not root_certificate or not private_key or not certificate:
+            root_certificate = 'cert/cert_chain.crt'
+            certificate = f'cert/client/col_{common_name}.crt'
+            private_key = f'cert/client/col_{common_name}.key'
+
+        client_args = self.config['network'][SETTINGS]
+
+        # patch certificates
+
+        client_args['root_certificate'] = root_certificate
+        client_args['certificate'] = certificate
+        client_args['private_key'] = private_key
+
+        client_args['aggregator_uuid'] = aggregator_uuid
+        client_args['federation_uuid'] = federation_uuid
+
+        if self.client_ is None:
+            self.client_ = CollaboratorGRPCClient(**client_args)
+
+        return self.client_
+
     def get_core_task_runner(self, data_loader=None,
                              model_provider=None,
                              task_keeper=None):
@@ -267,3 +294,28 @@ class Plan(Plan):
             return None
         obj = serializer_plugin.restore_object(filename)
         return obj
+
+    def get_server(self, root_certificate=None, private_key=None, certificate=None, **kwargs):
+        """Get gRPC server of the aggregator instance."""
+        common_name = self.config['network'][SETTINGS]['agg_addr'].lower()
+
+        if not root_certificate or not private_key or not certificate:
+            root_certificate = 'cert/cert_chain.crt'
+            certificate = f'cert/server/agg_{common_name}.crt'
+            private_key = f'cert/server/agg_{common_name}.key'
+
+        server_args = self.config['network'][SETTINGS]
+
+        # patch certificates
+
+        server_args.update(kwargs)
+        server_args['root_certificate'] = root_certificate
+        server_args['certificate'] = certificate
+        server_args['private_key'] = private_key
+
+        server_args['aggregator'] = self.get_aggregator()
+
+        if self.server_ is None:
+            self.server_ = AggregatorGRPCServer(**server_args)
+
+        return self.server_

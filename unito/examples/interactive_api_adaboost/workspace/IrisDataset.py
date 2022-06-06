@@ -33,11 +33,12 @@ class IrisDataset(DataInterface):
         """
         return self.X_train, self.y_train
 
+    # QUESTO E' STATO CAMBIATO PER ADABOOST
     def get_valid_loader(self, **kwargs):
         """
         Output of this method will be provided to tasks without optimizer in contract
         """
-        return self.X_test, self.y_test
+        return self.X_train, self.y_train
 
     def get_train_data_size(self):
         """
@@ -49,4 +50,4 @@ class IrisDataset(DataInterface):
         """
         Information for aggregation
         """
-        return len(self.X_test)
+        return len(self.X_train)

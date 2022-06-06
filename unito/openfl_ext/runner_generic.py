@@ -43,6 +43,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
                 task_kwargs = {}
                 if validation_flag:
                     loader = self.data_loader.get_valid_loader()
+                    # @TODO: the presence of apply is not obvious
                     if kwargs['apply'] == 'local':
                         validation_flag = '_local'
                     else:
@@ -51,6 +52,11 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
                     loader = self.data_loader.get_train_loader()
                     # If train task we also pass optimizer
                     task_kwargs[task_contract['optimizer']] = self.optimizer
+
+                # @TODO: Too much ad-hoc
+                if task_name == "train":
+                    task_kwargs[task_contract['optimizer']] = None
+                    task_kwargs[task_contract['adaboost_coeff']] = kwargs['adaboost_coeff']
 
                 for en_name, entity in zip(['model', 'data_loader', 'device'],
                                            [self.model, loader, device]):
@@ -62,8 +68,16 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
                 # Here is the training method call
                 metric_dict = callable_task(**task_kwargs)
 
-                return self._prepare_tensorkeys_for_agggregation(
-                    metric_dict, validation_flag, col_name, round_num)
+                optional_output = None
+                if task_name == "validate":
+                    optional_output = metric_dict[1]['misprediction']
+                    metric_dict = metric_dict[0]
+
+
+                global_model_dict, local_model_dict = self._prepare_tensorkeys_for_agggregation(metric_dict,
+                                                                                                validation_flag,
+                                                                                                col_name, round_num)
+                return global_model_dict, local_model_dict, optional_output
 
             return collaborator_adapted_task
 
@@ -364,7 +378,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
             self.logger,
             output_model_dict,
             **self.tensor_dict_split_fn_kwargs
-        ) if nn else output_model_dict, {}
+        ) if nn else output_model_dict, output_model_dict
         # Now set model dict for training tasks
         if with_opt_vars:
             output_model_dict = self.get_tensor_dict(with_opt_vars=True)
@@ -398,32 +412,44 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
         """
         # We rely on validation type tasks parameter `apply`
         # In the interface layer we add those parameters automatically
-        if 'apply' not in kwargs:
-            return [
-                       TensorKey(tensor_name, 'GLOBAL', 0, False, ('model',))
-                       for tensor_name in self.required_tensorkeys_for_function['global_model_dict']
-                   ] + [
-                       TensorKey(tensor_name, 'LOCAL', 0, False, ('model',))
-                       for tensor_name in self.required_tensorkeys_for_function['local_model_dict']
-                   ]
+        if 'retrieve' in kwargs:
+            if kwargs['retrieve'] == 'weak_learner':
+                return [
+                    TensorKey(tensor_name, 'GLOBAL', 0, False, ('weak_learner',))
+                    for tensor_name in self.required_tensorkeys_for_function['global_model_dict_val']
+                ]
+            elif kwargs['retrieve'] == 'adaboost_coeff':
+                return [
+                    TensorKey(tensor_name, 'GLOBAL', 0, False, ('adaboost_coeff',))
+                    for tensor_name in self.required_tensorkeys_for_function['global_model_dict_val']
+                ]
+        else:
+            if 'apply' not in kwargs:
+                return [
+                    TensorKey(tensor_name, 'LOCAL', 0, False, ('weak_learner',))
+                    for tensor_name in self.required_tensorkeys_for_function['local_model_dict']
+                ]
+                # [
+                #    TensorKey(tensor_name, 'GLOBAL', 0, False, ('model',))
+                #    for tensor_name in self.required_tensorkeys_for_function['global_model_dict']
+                # ] +
+            elif kwargs['apply'] == 'local':
+                return [
+                    TensorKey(tensor_name, 'LOCAL', 0, False, ('trained',))
+                    for tensor_name in {
+                        **self.required_tensorkeys_for_function['local_model_dict_val'],
+                        **self.required_tensorkeys_for_function['global_model_dict_val']
+                    }
+                ]
 
-        if kwargs['apply'] == 'local':
-            return [
-                TensorKey(tensor_name, 'LOCAL', 0, False, ('trained',))
-                for tensor_name in {
-                    **self.required_tensorkeys_for_function['local_model_dict_val'],
-                    **self.required_tensorkeys_for_function['global_model_dict_val']
-                }
-            ]
-
-        elif kwargs['apply'] == 'global':
-            return [
-                       TensorKey(tensor_name, 'GLOBAL', 0, False, ('model',))
-                       for tensor_name in self.required_tensorkeys_for_function['global_model_dict_val']
-                   ] + [
-                       TensorKey(tensor_name, 'LOCAL', 0, False, ('model',))
-                       for tensor_name in self.required_tensorkeys_for_function['local_model_dict_val']
-                   ]
+            elif kwargs['apply'] == 'global':
+                return [
+                           TensorKey(tensor_name, 'GLOBAL', 0, False, ('model',))
+                           for tensor_name in self.required_tensorkeys_for_function['global_model_dict_val']
+                       ] + [
+                           TensorKey(tensor_name, 'LOCAL', 0, False, ('model',))
+                           for tensor_name in self.required_tensorkeys_for_function['local_model_dict_val']
+                       ]
 
     def set_model_provider(self, model_provider):
         """Retrieve a model and an optimizer from the interface object."""

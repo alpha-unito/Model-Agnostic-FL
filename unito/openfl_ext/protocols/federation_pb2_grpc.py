@@ -24,6 +24,11 @@ class AggregatorStub(object):
                 request_serializer=federation__pb2.TensorRequest.SerializeToString,
                 response_deserializer=federation__pb2.TensorResponse.FromString,
                 )
+        self.GetTensor = channel.unary_unary(
+                '/Aggregator/GetTensor',
+                request_serializer=federation__pb2.TensorRequest.SerializeToString,
+                response_deserializer=federation__pb2.TensorResponse.FromString,
+                )
         self.SendLocalTaskResults = channel.stream_unary(
                 '/Aggregator/SendLocalTaskResults',
                 request_serializer=federation__pb2.DataStream.SerializeToString,
@@ -46,6 +51,12 @@ class AggregatorServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetTensor(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def SendLocalTaskResults(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -62,6 +73,11 @@ def add_AggregatorServicer_to_server(servicer, server):
             ),
             'GetAggregatedTensor': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAggregatedTensor,
+                    request_deserializer=federation__pb2.TensorRequest.FromString,
+                    response_serializer=federation__pb2.TensorResponse.SerializeToString,
+            ),
+            'GetTensor': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTensor,
                     request_deserializer=federation__pb2.TensorRequest.FromString,
                     response_serializer=federation__pb2.TensorResponse.SerializeToString,
             ),
@@ -109,6 +125,23 @@ class Aggregator(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Aggregator/GetAggregatedTensor',
+            federation__pb2.TensorRequest.SerializeToString,
+            federation__pb2.TensorResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetTensor(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Aggregator/GetTensor',
             federation__pb2.TensorRequest.SerializeToString,
             federation__pb2.TensorResponse.FromString,
             options, channel_credentials,

@@ -1,6 +1,7 @@
 from logging import getLogger
 from time import sleep
 
+import numpy as np
 from openfl.component.collaborator import Collaborator
 from openfl.component.collaborator.collaborator import DevicePolicy
 from openfl.component.collaborator.collaborator import OptTreatment
@@ -68,7 +69,8 @@ class Collaborator(Collaborator):
         self.compression_pipeline = compression_pipeline or NoCompressionPipeline()
         self.tensor_codec = TensorCodec(self.compression_pipeline)
         self.tensor_db = TensorDB(self.nn)
-        self.db_store_rounds = db_store_rounds
+        # @TODO: storing disabled
+        self.db_store_rounds = -1  # db_store_rounds
 
         self.task_runner = task_runner
         self.delta_updates = delta_updates
@@ -78,6 +80,9 @@ class Collaborator(Collaborator):
         self.task_config = task_config
 
         self.logger = getLogger(__name__)
+
+        self.adaboost_coeff = [1] * self.task_runner.get_train_data_size()
+        self.misprediction = [0] * self.task_runner.get_train_data_size()
 
         # RESET/CONTINUE_LOCAL/CONTINUE_GLOBAL
         if hasattr(OptTreatment, opt_treatment):
@@ -171,7 +176,8 @@ class Collaborator(Collaborator):
         # print('Required tensorkeys = {}'.format(
         # [tk[0] for tk in required_tensorkeys]))
         input_tensor_dict = self.get_numpy_dict_for_tensorkeys(
-            required_tensorkeys
+            required_tensorkeys,
+            **kwargs
         )
 
         # now we have whatever the model needs to do the task
@@ -197,11 +203,27 @@ class Collaborator(Collaborator):
             func = getattr(self.task_runner, func_name)
             self.logger.info('Using TaskRunner subclassing API')
 
-        global_output_tensor_dict, local_output_tensor_dict = func(
+        # @TODO: this is too much ad hoc
+        if task == '1_train':
+            kwargs['adaboost_coeff'] = self.adaboost_coeff
+
+        global_output_tensor_dict, local_output_tensor_dict, optional_output = func(
             col_name=self.collaborator_name,
             round_num=round_number,
             input_tensor_dict=input_tensor_dict,
             **kwargs)
+
+        # @TODO: this is too much ad hoc
+        if task == '2_adaboost_validate':
+            self.misprediction = optional_output
+        if task == '3_adaboost_update':
+            # @TODO assign a better name too this
+            input_tensor_dict = input_tensor_dict['generic_model']
+            coeff = input_tensor_dict[0]
+            best_model = int(input_tensor_dict[1])
+
+            self.adaboost_coeff = [self.adaboost_coeff[i] * np.exp(-coeff * (-1) ** self.misprediction[best_model][i])
+                                   for i in range(len(self.adaboost_coeff))]
 
         # Save global and local output_tensor_dicts to TensorDB
         self.tensor_db.cache_tensor(global_output_tensor_dict)
@@ -301,11 +323,11 @@ class Collaborator(Collaborator):
 
         return named_tensor
 
-    def get_numpy_dict_for_tensorkeys(self, tensor_keys):
+    def get_numpy_dict_for_tensorkeys(self, tensor_keys, **kwargs):
         """Get tensor dictionary for specified tensorkey set."""
-        return {k.tensor_name: self.get_data_for_tensorkey(k) for k in tensor_keys}
+        return {k.tensor_name: self.get_data_for_tensorkey(k, **kwargs) for k in tensor_keys}
 
-    def get_data_for_tensorkey(self, tensor_key):
+    def get_data_for_tensorkey(self, tensor_key, apply='local', **kwargs):
         """
         Resolve the tensor corresponding to the requested tensorkey.
 
@@ -316,8 +338,11 @@ class Collaborator(Collaborator):
         """
         # try to get from the store
         tensor_name, origin, round_number, report, tags = tensor_key
-        self.logger.debug(f'Attempting to retrieve tensor {tensor_key} from local store')
-        nparray = self.tensor_db.get_tensor_from_cache(tensor_key)
+        if apply == 'local':
+            self.logger.debug(f'Attempting to retrieve tensor {tensor_key} from local store')
+            nparray = self.tensor_db.get_tensor_from_cache(tensor_key)
+        else:
+            nparray = None
 
         # if None and origin is our client, request it from the client
         if nparray is None:
@@ -379,8 +404,59 @@ class Collaborator(Collaborator):
                     tensor_key,
                     require_lossless=True
                 )
+            # @TODO: too much ad-hoc
+            elif 'weak_learner' in tags:
+                nparray = self.get_tensor_from_aggregator(
+                    tensor_key,
+                    require_lossless=True
+                )
+            elif 'adaboost_coeff' in tags:
+                nparray = self.get_tensor_from_aggregator(
+                    tensor_key,
+                    require_lossless=True
+                )
         else:
             self.logger.debug(f'Found tensor {tensor_key} in local TensorDB')
+
+        return nparray
+
+    def get_tensor_from_aggregator(self, tensor_key,
+                                   require_lossless=False):
+        """
+        Return the decompressed tensor associated with the requested tensor key.
+
+        If the key requests a compressed tensor (in the tag), the tensor will
+        be decompressed before returning
+        If the key specifies an uncompressed tensor (or just omits a compressed
+        tag), the decompression operation will be skipped
+
+        Args
+        ----
+        tensor_key  :               The requested tensor
+        require_lossless:   Should compression of the tensor be allowed
+                                    in flight?
+                                    For the initial model, it may affect
+                                    convergence to apply lossy
+                                    compression. And metrics shouldn't be
+                                    compressed either
+
+        Returns
+        -------
+        nparray     : The decompressed tensor associated with the requested
+                      tensor key
+        """
+        tensor_name, origin, round_number, report, tags = tensor_key
+
+        self.logger.debug(f'Requesting tensor {tensor_key}')
+        tensor = self.client.get_tensor(
+            self.collaborator_name, tensor_name, round_number, report, tags, require_lossless)
+
+        # this translates to a numpy array and includes decompression, as
+        # necessary
+        nparray = self.named_tensor_to_nparray(tensor)
+
+        # cache this tensor
+        self.tensor_db.cache_tensor({tensor_key: nparray})
 
         return nparray
 
@@ -413,7 +489,7 @@ class Collaborator(Collaborator):
 
         self.logger.debug(f'Requesting aggregated tensor {tensor_key}')
         tensor = self.client.get_aggregated_tensor(
-            self.collaborator_name, tensor_name, round_number, report, tags, require_lossless)
+            self.collaborator_name, tensor_name, round_number + 1, report, tags, require_lossless)
 
         # this translates to a numpy array and includes decompression, as
         # necessary

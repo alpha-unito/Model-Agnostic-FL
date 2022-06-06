@@ -5,7 +5,7 @@ aggregator:
     init_state_path: save/init.pbuf
     last_state_path: save/last.pbuf
     nn: false
-    rounds_to_train: 2
+    rounds_to_train: 3
   template: unito.openfl_ext.aggregator.Aggregator
 api_layer:
   required_plugin_components:
@@ -21,9 +21,11 @@ assigner:
     - name: train_and_validate
       percentage: 1.0
       tasks:
-      - train
-      - validate
-  template: openfl.component.RandomGroupedAssigner
+      - 0_pull_model
+      - 1_train
+      - 2_adaboost_validate
+      - 3_adaboost_update
+  template: unito.openfl_ext.assigner.Assigner
 collaborator:
   settings:
     db_store_rounds: 1
@@ -54,14 +56,25 @@ task_runner:
   settings: {}
   template: unito.openfl_ext.runner_generic.GenericTaskRunner
 tasks:
-  settings: {}
-  train:
-    aggregation_type: unito.openfl_ext.aggregate_random_forest.AggregateRandomForest
-    function: train
+  0_pull_model:
+    aggregation_type: openfl.component.aggregation_functions.WeightedAverage
+    function: pull_model
     kwargs:
       apply: global
-  validate:
+      retrieve: weak_learner
+  1_train:
+    aggregation_type: unito.openfl_ext.aggregate_random_forest.AggregateRandomForest
+    function: train
+    kwargs: {}
+  2_adaboost_validate:
+    aggregation_type: unito.openfl_ext.aggregate_adaboost.AggregateAdaboost
     function: validate
     kwargs:
       apply: global
-    settings: {}
+  3_adaboost_update:
+    aggregation_type: openfl.component.aggregation_functions.WeightedAverage
+    function: adaboost_update
+    kwargs:
+      apply: global
+      retrieve: adaboost_coeff
+  settings: {}

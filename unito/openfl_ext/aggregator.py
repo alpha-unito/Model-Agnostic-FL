@@ -1,4 +1,5 @@
 import queue
+import time
 from logging import getLogger
 
 from openfl.component.aggregation_functions import WeightedAverage
@@ -75,7 +76,8 @@ class Aggregator(Aggregator):
         self.tensor_db = TensorDB(self.nn)
         # FIXME: I think next line generates an error on the second round
         # if it is set to 1 for the aggregator.
-        self.db_store_rounds = db_store_rounds
+        # @TODO: storing disabled
+        self.db_store_rounds = -1  # db_store_rounds
         self.compression_pipeline = compression_pipeline
         self.tensor_codec = TensorCodec(self.compression_pipeline)
         self.logger = getLogger(__name__)
@@ -111,6 +113,24 @@ class Aggregator(Aggregator):
         self.collaborator_task_weight = {}  # {TaskResultKey: data_size}
 
         # self.log_metric = write_metric
+
+    def _load_initial_tensors_from_dict(self, tensor_dict):
+        """
+        Load all of the tensors required to begin federated learning.
+
+        Required tensors are: \
+            1. Initial model.
+
+        Returns:
+            None
+        """
+        tensor_key_dict = {
+            TensorKey(k, self.uuid, self.round_number, False, ('weak_learner',)):
+                v for k, v in tensor_dict.items()
+        }
+        # all initial model tensors are loaded here
+        self.tensor_db.cache_tensor(tensor_key_dict)
+        self.logger.debug(f'This is the initial tensor_db: {self.tensor_db}')
 
     def send_local_task_results(self, collaborator_name, round_number, task_name,
                                 data_size, named_tensors):
@@ -185,7 +205,7 @@ class Aggregator(Aggregator):
 
         self.collaborator_tasks_results[task_key] = task_results
 
-        self._end_of_task_check(task_name)
+        self._end_of_task_check(task_name, round_number)
 
     def _process_named_tensor(self, named_tensor, collaborator_name):
         """
@@ -282,7 +302,7 @@ class Aggregator(Aggregator):
 
         return final_tensor_key, final_nparray
 
-    def _end_of_task_check(self, task_name):
+    def _end_of_task_check(self, task_name, round_number):
         """
         Check whether all collaborators who are supposed to perform the task complete.
 
@@ -309,14 +329,15 @@ class Aggregator(Aggregator):
         Returns:
             None
         """
+        self._compute_validation_related_task_metrics(task_name)
 
         if not self._is_round_done():
             return
 
         # Compute all validation related metrics
-        all_tasks = self.assigner.get_all_tasks_for_round(self.round_number)
-        for task_name in all_tasks:
-            self._compute_validation_related_task_metrics(task_name)
+        # all_tasks = self.assigner.get_all_tasks_for_round(self.round_number)
+        # for task_name in all_tasks:
+        #    self._compute_validation_related_task_metrics(task_name)
 
         # Once all of the task results have been processed
         self.round_number += 1
@@ -377,7 +398,7 @@ class Aggregator(Aggregator):
             agg_tensor_key = TensorKey(tensor_name, origin, round_number, report, new_tags)
             agg_tensor_name, agg_origin, agg_round_number, agg_report, agg_tags = agg_tensor_key
             # TODO: This if can be removed (maybe) (with a well-configurated plan)
-            agg_function = WeightedAverage() if 'metric' in tags else task_agg_function
+            agg_function = task_agg_function if task_name == '2_adaboost_validate' else WeightedAverage() if 'metric' in tags else task_agg_function
             agg_results = self.tensor_db.get_aggregated_tensor(
                 agg_tensor_key, collaborator_weight_dict, aggregation_function=agg_function)
             if report:
@@ -404,16 +425,19 @@ class Aggregator(Aggregator):
                 self.metric_queue.put(metric_dict)
                 # TODO Add all of the logic for saving the model based
                 #  on best accuracy, lowest loss, etc.
-                if 'validate_agg' in tags:
-                    # Compare the accuracy of the model, and
-                    # potentially save it
-                    if self.best_model_score is None or self.best_model_score < agg_results:
-                        self.logger.metric(f'Round {round_number}: saved the best '
-                                           f'model with score {agg_results}')
-                        self.best_model_score = agg_results
-                        self._save_model(round_number, self.best_state_path)
+                # @TODO: this is in conflict with the exchange of arrays of metrics
+                # if 'validate_agg' in tags:
+                #    # Compare the accuracy of the model, and
+                #    # potentially save it
+                #    if self.best_model_score is None or self.best_model_score < agg_results:
+                #        self.logger.metric(f'Round {round_number}: saved the best '
+                #                           f'model with score {agg_results}')
+                #        self.best_model_score = agg_results
+                #        self._save_model(round_number, self.best_state_path)
             if 'trained' in tags:
                 self._prepare_trained(tensor_name, origin, round_number, report, agg_results)
+            if task_name == '2_adaboost_validate':
+                self._prepare_adaboost(tensor_name, origin, round_number, report, agg_results)
 
     def _save_model(self, round_number, file_path):
         """
@@ -548,6 +572,35 @@ class Aggregator(Aggregator):
         # Finally, cache the updated model tensor
         self.tensor_db.cache_tensor({final_model_tk: new_model_nparray})
 
+    def _prepare_adaboost(self, tensor_name, origin, round_number, report, agg_results):
+        """
+        Prepare aggregated tensorkey tags for adaboost.
+
+        Args:
+           tensor_name : str
+           origin:
+           round_number: int
+           report: bool
+           agg_results: np.array
+        """
+        # The aggregated tensorkey tags should have the form of
+        # 'trained' or 'trained.lossy_decompressed'
+        # They need to be relabeled to 'aggregated' and
+        # reinserted. Then delta performed, compressed, etc.
+        # then reinserted to TensorDB with 'model' tag
+
+        # First insert the aggregated model layer with the
+        # correct tensorkey
+        agg_tag_tk = TensorKey(
+            tensor_name,
+            origin,
+            round_number,
+            report,
+            ('adaboost_coeff',)
+        )
+
+        self.tensor_db.cache_tensor({agg_tag_tk: agg_results})
+
     def get_aggregated_tensor(self, collaborator_name, tensor_name,
                               round_number, report, tags, require_lossless):
         """
@@ -596,16 +649,86 @@ class Aggregator(Aggregator):
         else:
             agg_tensor_key = tensor_key
 
-        nparray = self.tensor_db.get_tensor_from_cache(agg_tensor_key)
+        nparray = None
+        while nparray is None:
+            nparray = self.tensor_db.get_tensor_from_cache(agg_tensor_key)
 
-        if nparray is None:
-            raise ValueError(f'Aggregator does not have an aggregated tensor for {tensor_key}')
+            if nparray is None:
+                self.logger.info(f'Aggregator does not have an aggregated tensor for {tensor_key}. Retrying')
+                time.sleep(1)
+                # raise ValueError(f'Aggregator does not have an aggregated tensor for {tensor_key}')
 
         # quite a bit happens in here, including compression, delta handling,
         # etc...
         # we might want to cache these as well
         named_tensor = self._nparray_to_named_tensor(
             agg_tensor_key,
+            nparray,
+            send_model_deltas=True,
+            compress_lossless=compress_lossless
+        )
+
+        return named_tensor
+
+    def get_tensor(self, collaborator_name, tensor_name,
+                   round_number, report, tags, require_lossless):
+        """
+        RPC called by collaborator.
+
+        Performs local lookup to determine if there is a tensor available \
+            that matches the request.
+
+        Args:
+            collaborator_name : str
+                Requested tensor key collaborator name
+            tensor_name: str
+            require_lossless: bool
+            round_number: int
+            report: bool
+            tags: list[str]
+        Returns:
+            named_tensor : protobuf NamedTensor
+                the tensor requested by the collaborator
+        """
+        self.logger.debug(f'Retrieving tensor {tensor_name},{round_number},{tags} '
+                          f'for collaborator {collaborator_name}')
+
+        if 'compressed' in tags or require_lossless:
+            compress_lossless = True
+        else:
+            compress_lossless = False
+
+        # TODO the TensorDB doesn't support compressed data yet.
+        #  The returned tensor will
+        # be recompressed anyway.
+        if 'compressed' in tags:
+            tags.remove('compressed')
+        if 'lossy_compressed' in tags:
+            tags.remove('lossy_compressed')
+
+        # @TODO: this sucks
+        tensor_key = TensorKey(
+            'errors' if 'adaboost_coeff' in tags else tensor_name, self.uuid,
+            0 if 'weak_learner' in tags else round_number, True if 'adaboost_coeff' in tags else report, tuple(tags)
+        )
+        tensor_name, origin, round_number, report, tags = tensor_key
+
+        nparray = self.tensor_db.get_tensor_from_cache(tensor_key)
+
+        nparray = None
+        while nparray is None:
+            nparray = self.tensor_db.get_tensor_from_cache(tensor_key)
+
+            if nparray is None:
+                self.logger.info(f'Aggregator does not have a tensor for {tensor_key}. Retrying')
+                time.sleep(1)
+                # raise ValueError(f'Aggregator does not have a tensor for {tensor_key}')
+
+        # quite a bit happens in here, including compression, delta handling,
+        # etc...
+        # we might want to cache these as well
+        named_tensor = self._nparray_to_named_tensor(
+            tensor_key,
             nparray,
             send_model_deltas=True,
             compress_lossless=compress_lossless

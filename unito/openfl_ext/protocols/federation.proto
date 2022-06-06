@@ -5,6 +5,7 @@ syntax = "proto2";
 service Aggregator {
     rpc GetTasks(TasksRequest)                  returns (TasksResponse) {}
     rpc GetAggregatedTensor(TensorRequest)      returns (TensorResponse) {}
+    rpc GetTensor(TensorRequest)                returns (TensorResponse) {}
     rpc SendLocalTaskResults(stream DataStream) returns (Acknowledgement) {}
 }
 
