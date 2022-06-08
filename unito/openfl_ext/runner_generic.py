@@ -68,11 +68,11 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
                 # Here is the training method call
                 metric_dict = callable_task(**task_kwargs)
 
+                # @TODO: Too much ad-hoc
                 optional_output = None
-                if task_name == "validate":
+                if task_name == "validate_weak_learners":
                     optional_output = metric_dict[1]['misprediction']
                     metric_dict = metric_dict[0]
-
 
                 global_model_dict, local_model_dict = self._prepare_tensorkeys_for_agggregation(metric_dict,
                                                                                                 validation_flag,
@@ -423,6 +423,8 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
                     TensorKey(tensor_name, 'GLOBAL', 0, False, ('adaboost_coeff',))
                     for tensor_name in self.required_tensorkeys_for_function['global_model_dict_val']
                 ]
+            elif kwargs['retrieve'] == 'adaboost':
+                return [TensorKey('generic_model', 'LOCAL', 0, False, ('adaboost',))]
         else:
             if 'apply' not in kwargs:
                 return [

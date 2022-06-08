@@ -33,7 +33,7 @@ def train(model, train_loader, device, optimizer, adaboost_coeff):
 
 
 @task_interface.register_fl_task(model='model', data_loader='val_loader', device='device')
-def validate(model, val_loader, device):
+def validate_weak_learners(model, val_loader, device):
     miss = []
     try:
         if model is not None:
@@ -42,9 +42,6 @@ def validate(model, val_loader, device):
             X, y = val_loader
 
             errors = []
-            print("+++++++++++++++++++")
-            print(model.n_estimators)
-            print("+++++++++++++++++++")
             miss = []
             for weak_learner in model.estimators_:
                 pred = weak_learner.predict(X)
@@ -58,6 +55,28 @@ def validate(model, val_loader, device):
         errors = 0
 
     return {'errors': errors}, {'misprediction': miss}
+
+
+@task_interface.register_fl_task(model='model', data_loader='val_loader', device='device')
+def validate(model, val_loader, device):
+    try:
+        if model is not None:
+            check_is_fitted(model)
+
+            X, y = val_loader
+            print("--------------------")
+            print(model.n_estimators)
+            print("--------------------")
+            pred = model.predict(X)
+            accuracy = accuracy_score(pred, y, normalize=True)
+        else:
+            print("Model not found")
+            accuracy = 0
+    except NotFittedError:
+        print("Model is not yet fit")
+        accuracy = 0
+
+    return {'accuracy': accuracy}
 
 
 @task_interface.register_fl_task(model='model', data_loader='val_loader', device='device')

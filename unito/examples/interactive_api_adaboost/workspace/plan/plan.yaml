@@ -25,6 +25,7 @@ assigner:
       - 1_train
       - 2_adaboost_validate
       - 3_adaboost_update
+      - 4_adaboost_validate
   template: unito.openfl_ext.assigner.Assigner
 collaborator:
   settings:
@@ -68,7 +69,7 @@ tasks:
     kwargs: {}
   2_adaboost_validate:
     aggregation_type: unito.openfl_ext.aggregate_adaboost.AggregateAdaboost
-    function: validate
+    function: validate_weak_learners
     kwargs:
       apply: global
   3_adaboost_update:
@@ -77,4 +78,10 @@ tasks:
     kwargs:
       apply: global
       retrieve: adaboost_coeff
+  4_adaboost_validate:
+    aggregation_type: openfl.component.aggregation_functions.WeightedAverage
+    function: validate
+    kwargs:
+      apply: local
+      retrieve: adaboost
   settings: {}

@@ -69,8 +69,7 @@ class Collaborator(Collaborator):
         self.compression_pipeline = compression_pipeline or NoCompressionPipeline()
         self.tensor_codec = TensorCodec(self.compression_pipeline)
         self.tensor_db = TensorDB(self.nn)
-        # @TODO: storing disabled
-        self.db_store_rounds = -1  # db_store_rounds
+        self.db_store_rounds = 1  # db_store_rounds
 
         self.task_runner = task_runner
         self.delta_updates = delta_updates
@@ -81,8 +80,10 @@ class Collaborator(Collaborator):
 
         self.logger = getLogger(__name__)
 
+        # @TODO: AdaBoost variables
         self.adaboost_coeff = [1] * self.task_runner.get_train_data_size()
         self.misprediction = [0] * self.task_runner.get_train_data_size()
+        self.model_buffer = None
 
         # RESET/CONTINUE_LOCAL/CONTINUE_GLOBAL
         if hasattr(OptTreatment, opt_treatment):
@@ -216,6 +217,7 @@ class Collaborator(Collaborator):
         # @TODO: this is too much ad hoc
         if task == '2_adaboost_validate':
             self.misprediction = optional_output
+            self.model_buffer = input_tensor_dict
         if task == '3_adaboost_update':
             # @TODO assign a better name too this
             input_tensor_dict = input_tensor_dict['generic_model']
@@ -224,6 +226,28 @@ class Collaborator(Collaborator):
 
             self.adaboost_coeff = [self.adaboost_coeff[i] * np.exp(-coeff * (-1) ** self.misprediction[best_model][i])
                                    for i in range(len(self.adaboost_coeff))]
+
+            adaboost = self.tensor_db.get_tensor_from_cache(TensorKey(
+                'generic_model',
+                self.collaborator_name,
+                round_number - 1,
+                False,
+                ('adaboost',)
+            ))
+            print(adaboost)
+            if adaboost is not None:
+                adaboost.add(self.model_buffer['generic_model'].get(best_model), coeff)
+            else:
+                adaboost = self.model_buffer['generic_model'].replace(
+                    self.model_buffer['generic_model'].get(best_model), coeff)
+
+            self.tensor_db.cache_tensor({TensorKey(
+                'generic_model',
+                self.collaborator_name,
+                round_number,
+                False,
+                ('adaboost',)
+            ): adaboost})
 
         # Save global and local output_tensor_dicts to TensorDB
         self.tensor_db.cache_tensor(global_output_tensor_dict)
