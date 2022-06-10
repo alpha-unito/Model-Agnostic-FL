@@ -1,6 +1,6 @@
 from openfl.interface.interactive_api.experiment import DataInterface
-from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
 
 
 class IrisDataset(DataInterface):
@@ -33,12 +33,11 @@ class IrisDataset(DataInterface):
         """
         return self.X_train, self.y_train
 
-    # QUESTO E' STATO CAMBIATO PER ADABOOST
     def get_valid_loader(self, **kwargs):
         """
         Output of this method will be provided to tasks without optimizer in contract
         """
-        return self.X_train, self.y_train
+        return self.X_test, self.y_test
 
     def get_train_data_size(self):
         """
@@ -50,4 +49,4 @@ class IrisDataset(DataInterface):
         """
         Information for aggregation
         """
-        return len(self.X_train)
+        return len(self.X_test)

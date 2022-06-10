@@ -21,7 +21,6 @@ assigner:
     - name: train_and_validate
       percentage: 1.0
       tasks:
-      - 0_pull_model
       - 1_train
       - 2_adaboost_validate
       - 3_adaboost_update
@@ -57,21 +56,19 @@ task_runner:
   settings: {}
   template: unito.openfl_ext.runner_generic.GenericTaskRunner
 tasks:
-  0_pull_model:
-    aggregation_type: openfl.component.aggregation_functions.WeightedAverage
-    function: pull_model
-    kwargs:
-      apply: global
-      retrieve: weak_learner
   1_train:
     aggregation_type: unito.openfl_ext.aggregate_random_forest.AggregateRandomForest
     function: train
-    kwargs: {}
+    kwargs:
+      apply: global
+      data: train
+      retrieve: weak_learner
   2_adaboost_validate:
     aggregation_type: unito.openfl_ext.aggregate_adaboost.AggregateAdaboost
     function: validate_weak_learners
     kwargs:
       apply: global
+      data: train
   3_adaboost_update:
     aggregation_type: openfl.component.aggregation_functions.WeightedAverage
     function: adaboost_update
@@ -83,5 +80,6 @@ tasks:
     function: validate
     kwargs:
       apply: local
+      data: test
       retrieve: adaboost
   settings: {}

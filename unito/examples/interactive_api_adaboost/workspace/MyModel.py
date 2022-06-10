@@ -11,7 +11,6 @@ class MyRandomForestClassifier(AdaBoostClassifier):
     def add(self, weak_learner, coeff):
         self.estimators_.append(weak_learner)
         self.estimator_weights_ = np.append(self.estimator_weights_, coeff)
-        self.n_estimators += 1
 
     def get(self, index):
         return self.estimators_[index]
@@ -19,6 +18,9 @@ class MyRandomForestClassifier(AdaBoostClassifier):
     def replace(self, weak_learner, coeff):
         self.estimators_ = [weak_learner]
         self.estimator_weights_ = np.array([coeff])
-        self.n_estimators = 1
 
         return self
+
+    def print(self):
+        print(self.estimators_)
+        print(self.estimator_weights_)

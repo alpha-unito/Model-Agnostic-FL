@@ -23,7 +23,7 @@ task_interface = TaskInterface()
 def train(model, train_loader, device, optimizer, adaboost_coeff):
     if model is not None:
         X, y = train_loader
-        model.fit(X, y, np.array(adaboost_coeff) / np.linalg.norm(np.array(adaboost_coeff), ord=1))
+        model.fit(X, y, np.array(adaboost_coeff))
         pred = model.predict(X)
         metric = accuracy_score(pred, y, normalize=True)
     else:
@@ -32,8 +32,10 @@ def train(model, train_loader, device, optimizer, adaboost_coeff):
     return {'accuracy': metric}
 
 
-@task_interface.register_fl_task(model='model', data_loader='val_loader', device='device')
-def validate_weak_learners(model, val_loader, device):
+@task_interface.register_fl_task(model='model', data_loader='val_loader', device='device',
+                                 adaboost_coeff='adaboost_coeff')
+def validate_weak_learners(model, val_loader, device, adaboost_coeff):
+    error = 0
     miss = []
     try:
         if model is not None:
@@ -41,31 +43,32 @@ def validate_weak_learners(model, val_loader, device):
 
             X, y = val_loader
 
-            errors = []
-            miss = []
+            error = []
             for weak_learner in model.estimators_:
                 pred = weak_learner.predict(X)
-                errors.append(1 - accuracy_score(pred, y, normalize=True))
-                miss.append([1 if x_pred != x_true else 0 for x_pred, x_true in zip(pred, y)])
+                error.append(
+                    sum([coeff if x_pred != x_true else 0 for x_pred, x_true, coeff in
+                         zip(pred, y, adaboost_coeff)]))
+                miss.append([1 if x_pred != x_true else 0 for x_pred, x_true in
+                             zip(pred, y)])
         else:
             print("Model not found")
-            errors = 0
     except NotFittedError:
         print("Model is not yet fit")
-        errors = 0
 
-    return {'errors': errors}, {'misprediction': miss}
+    return {'errors': error}, {'misprediction': miss}
 
 
 @task_interface.register_fl_task(model='model', data_loader='val_loader', device='device')
 def validate(model, val_loader, device):
+    print(model.print())
     try:
         if model is not None:
             check_is_fitted(model)
 
             X, y = val_loader
             print("--------------------")
-            print(model.n_estimators)
+            print(len(model.estimators_))
             print("--------------------")
             pred = model.predict(X)
             accuracy = accuracy_score(pred, y, normalize=True)

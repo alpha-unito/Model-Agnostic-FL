@@ -2,15 +2,11 @@
 
 from logging import getLogger
 
-import numpy
 import numpy as np
-import tqdm
 from openfl.federated.task.task_runner import CoreTaskRunner
 from openfl.utilities import TensorKey
 from openfl.utilities import split_tensor_dict_for_holdouts
 from sklearn.base import BaseEstimator
-from sklearn.exceptions import NotFittedError
-from sklearn.metrics import accuracy_score
 
 
 class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
@@ -39,23 +35,29 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
 
                 device = kwargs.get('device', 'cpu')
 
+                loader = None
+                if 'data' in kwargs:
+                    if kwargs['data'] == 'test':
+                        loader = self.data_loader.get_valid_loader()
+                    else:
+                        loader = self.data_loader.get_train_loader()
+
                 self.rebuild_model(input_tensor_dict, validation=validation_flag, device=device)
                 task_kwargs = {}
                 if validation_flag:
-                    loader = self.data_loader.get_valid_loader()
                     # @TODO: the presence of apply is not obvious
                     if kwargs['apply'] == 'local':
                         validation_flag = '_local'
                     else:
                         validation_flag = '_agg'
                 else:
-                    loader = self.data_loader.get_train_loader()
-                    # If train task we also pass optimizer
                     task_kwargs[task_contract['optimizer']] = self.optimizer
 
                 # @TODO: Too much ad-hoc
                 if task_name == "train":
                     task_kwargs[task_contract['optimizer']] = None
+                    task_kwargs[task_contract['adaboost_coeff']] = kwargs['adaboost_coeff']
+                if task_name == "validate_weak_learners":
                     task_kwargs[task_contract['adaboost_coeff']] = kwargs['adaboost_coeff']
 
                 for en_name, entity in zip(['model', 'data_loader', 'device'],
@@ -235,115 +237,6 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
         """
         return self.data_loader.get_valid_data_size()
 
-    def train(self, col_name, round_num, input_tensor_dict, num_batches=None, use_tqdm=False, **kwargs):
-        """Train batches.
-
-        Train the model on the requested number of batches.
-
-        Args:
-            col_name:            Name of the collaborator
-            round_num:           What round is it
-            input_tensor_dict:   Required input tensors (for model)
-            num_batches:         The number of batches to train on before
-                                 returning
-            use_tqdm (bool):     Use tqdm to print a progress bar (Default=True)
-
-        Returns:
-            global_output_dict:  Tensors to send back to the aggregator
-            local_output_dict:   Tensors to maintain in the local TensorDB
-        """
-
-        loader = self.data_loader.get_train_loader(num_batches)
-        if use_tqdm:
-            loader = tqdm.tqdm(loader, desc="train epoch")
-        metric = None
-        for data, target in loader:
-            self.model = self.model.fit(data, target)
-            pred = self.model.predict(data)
-            metric = accuracy_score(target, pred, normalize=True)
-        tags = ('trained',)
-        origin = col_name
-        output_metric_dict = {
-            TensorKey(
-                'acc', origin, round_num, True, ('metric',)
-            ): numpy.array(metric)
-        }
-
-        # output model tensors (Doesn't include TensorKey)
-        output_model = self.model
-
-        global_tensorkey_model_dict = {
-            TensorKey('model', origin, round_num, False, tags):
-                output_model
-        }
-        local_tensorkey_model_dict = {
-            TensorKey('model', origin, round_num, False, tags):
-                output_model
-        }
-
-        next_local_tensorkey_model_dict = {
-            TensorKey('model', origin, round_num + 1, False, ('model',)):
-                output_model
-        }
-
-        global_tensor_dict = {
-            **output_metric_dict,
-            **global_tensorkey_model_dict
-        }
-        local_tensor_dict = {
-            **local_tensorkey_model_dict,
-            **next_local_tensorkey_model_dict
-        }
-
-        return global_tensor_dict, local_tensor_dict
-
-    def validate(self, col_name, round_num, input_tensor_dict, use_tqdm=False, **kwargs):
-        """Validate.
-
-        Run validation of the model on the local data.
-
-        Args:
-            col_name:            Name of the collaborator
-            round_num:           What round is it
-            input_tensor_dict:   Required input tensors (for model)
-            use_tqdm (bool):     Use tqdm to print a progress bar (Default=True)
-
-        Returns:
-            global_output_dict:  Tensors to send back to the aggregator
-            local_output_dict:   Tensors to maintain in the local TensorDB
-
-        """
-        if input_tensor_dict["model"] is not None:
-            self.model = input_tensor_dict["model"]
-        origin = col_name
-        total_samples = 0
-
-        suffix = 'validate'
-        if kwargs['apply'] == 'local':
-            suffix += '_local'
-        else:
-            suffix += '_agg'
-        tags = ('metric', suffix)
-
-        metric = None
-        loader = self.data_loader.get_valid_loader()
-        if use_tqdm:
-            loader = tqdm.tqdm(loader, desc="validate")
-        try:
-            for data, target in loader:
-                samples = target.shape[0]
-                total_samples += samples
-                pred = self.model.predict(data)
-                metric = accuracy_score(target, pred, normalize=True)
-        except NotFittedError as _:
-            metric = 0.
-        output_tensor_dict = {
-            TensorKey('acc', origin, round_num, True, tags):
-                numpy.array(metric)
-        }
-
-        return output_tensor_dict, {}
-
     def set_framework_adapter(self, framework_adapter):
         """
         Set framework adapter.
@@ -412,29 +305,33 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
         """
         # We rely on validation type tasks parameter `apply`
         # In the interface layer we add those parameters automatically
+
+        origin = 'LOCAL'
+        if 'apply' in kwargs:
+            origin = 'GLOBAL' if kwargs['apply'] == 'global' else 'LOCAL'
+
         if 'retrieve' in kwargs:
             if kwargs['retrieve'] == 'weak_learner':
                 return [
-                    TensorKey(tensor_name, 'GLOBAL', 0, False, ('weak_learner',))
+                    TensorKey(tensor_name, origin, 0, False, ('weak_learner',))
                     for tensor_name in self.required_tensorkeys_for_function['global_model_dict_val']
                 ]
             elif kwargs['retrieve'] == 'adaboost_coeff':
                 return [
-                    TensorKey(tensor_name, 'GLOBAL', 0, False, ('adaboost_coeff',))
+                    TensorKey(tensor_name, origin, 0, False, ('adaboost_coeff',))
                     for tensor_name in self.required_tensorkeys_for_function['global_model_dict_val']
                 ]
             elif kwargs['retrieve'] == 'adaboost':
-                return [TensorKey('generic_model', 'LOCAL', 0, False, ('adaboost',))]
+                return [TensorKey('generic_model', origin, 0, False, ('adaboost',))]
         else:
             if 'apply' not in kwargs:
                 return [
                     TensorKey(tensor_name, 'LOCAL', 0, False, ('weak_learner',))
                     for tensor_name in self.required_tensorkeys_for_function['local_model_dict']
-                ]
-                # [
-                #    TensorKey(tensor_name, 'GLOBAL', 0, False, ('model',))
+                ]  # + [
+                #    TensorKey(tensor_name, 'GLOBAL', 0, False, ('model', loader))
                 #    for tensor_name in self.required_tensorkeys_for_function['global_model_dict']
-                # ] +
+                # ]
             elif kwargs['apply'] == 'local':
                 return [
                     TensorKey(tensor_name, 'LOCAL', 0, False, ('trained',))

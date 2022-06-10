@@ -107,7 +107,6 @@ class TensorDB(TensorDB):
         if len(df) == 0:
             return None
 
-        # @TODO: this shuold differentiare between generic models and metrics
         if self.nn:
             result = np.array(df['nparray'].iloc[0])
         else:
