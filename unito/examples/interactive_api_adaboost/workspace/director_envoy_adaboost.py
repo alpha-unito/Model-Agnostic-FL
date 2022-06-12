@@ -35,7 +35,7 @@ def train(model, train_loader, device, optimizer, adaboost_coeff):
 @task_interface.register_fl_task(model='model', data_loader='val_loader', device='device',
                                  adaboost_coeff='adaboost_coeff')
 def validate_weak_learners(model, val_loader, device, adaboost_coeff):
-    error = 0
+    error = [0]
     miss = []
     try:
         if model is not None:
@@ -61,15 +61,12 @@ def validate_weak_learners(model, val_loader, device, adaboost_coeff):
 
 @task_interface.register_fl_task(model='model', data_loader='val_loader', device='device')
 def validate(model, val_loader, device):
-    print(model.print())
     try:
         if model is not None:
             check_is_fitted(model)
 
             X, y = val_loader
-            print("--------------------")
-            print(len(model.estimators_))
-            print("--------------------")
+
             pred = model.predict(X)
             accuracy = accuracy_score(pred, y, normalize=True)
         else:
@@ -80,11 +77,6 @@ def validate(model, val_loader, device):
         accuracy = 0
 
     return {'accuracy': accuracy}
-
-
-@task_interface.register_fl_task(model='model', data_loader='val_loader', device='device')
-def pull_model(model, val_loader, device):
-    return {'pulling_model': 0}
 
 
 @task_interface.register_fl_task(model='model', data_loader='val_loader', device='device')

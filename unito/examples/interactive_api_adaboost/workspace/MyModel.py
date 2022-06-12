@@ -20,7 +20,3 @@ class MyRandomForestClassifier(AdaBoostClassifier):
         self.estimator_weights_ = np.array([coeff])
 
         return self
-
-    def print(self):
-        print(self.estimators_)
-        print(self.estimator_weights_)

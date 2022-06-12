@@ -22,7 +22,7 @@ assigner:
       percentage: 1.0
       tasks:
       - 1_train
-      - 2_adaboost_validate
+      - 2_weak_learners_validate
       - 3_adaboost_update
       - 4_adaboost_validate
   template: unito.openfl_ext.assigner.Assigner
@@ -63,12 +63,13 @@ tasks:
       apply: global
       data: train
       retrieve: weak_learner
-  2_adaboost_validate:
+  2_weak_learners_validate:
     aggregation_type: unito.openfl_ext.aggregate_adaboost.AggregateAdaboost
     function: validate_weak_learners
     kwargs:
       apply: global
       data: train
+      retrieve: model
   3_adaboost_update:
     aggregation_type: openfl.component.aggregation_functions.WeightedAverage
     function: adaboost_update

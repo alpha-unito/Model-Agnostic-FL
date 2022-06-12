@@ -180,8 +180,7 @@ class Collaborator(Collaborator):
             required_tensorkeys,
             **kwargs
         )
-        print(required_tensorkeys)
-        print(input_tensor_dict)
+
         # now we have whatever the model needs to do the task
         if hasattr(self.task_runner, 'TASK_REGISTRY'):
             # New interactive python API
@@ -206,7 +205,7 @@ class Collaborator(Collaborator):
             self.logger.info('Using TaskRunner subclassing API')
 
         # @TODO: this is too much ad hoc
-        if task == '1_train' or task == '2_adaboost_validate':
+        if task == '1_train' or task == '2_weak_learners_validate':
             kwargs['adaboost_coeff'] = self.adaboost_coeff
 
         global_output_tensor_dict, local_output_tensor_dict, optional = func(
@@ -216,7 +215,7 @@ class Collaborator(Collaborator):
             **kwargs)
 
         # @TODO: this is too much ad hoc
-        if task == '2_adaboost_validate':
+        if task == '2_weak_learners_validate':
             self.model_buffer = input_tensor_dict['generic_model']
             self.errors = optional
         if task == '3_adaboost_update':
@@ -249,13 +248,6 @@ class Collaborator(Collaborator):
                 False,
                 ('adaboost',)
             ): adaboost})
-            print('salvo: ' + str({TensorKey(
-                'generic_model',
-                self.collaborator_name,
-                round_number,
-                False,
-                ('adaboost',)
-            ): adaboost}))
 
         # Save global and local output_tensor_dicts to TensorDB
         self.tensor_db.cache_tensor(global_output_tensor_dict)

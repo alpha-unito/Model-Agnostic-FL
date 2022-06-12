@@ -17,9 +17,4 @@ class AggregateAdaboost(AggregationFunction):
         e = (1 / (len(sums))) * sum([tensor[c] for tensor in tensors])
         a = np.log((1.0 - e) / (e + 1e-10)) + np.log(n_classes - 1)
 
-        print(tensors)
-        print(c)
-        print(e)
-        print(a)
-
         return np.array([a, c])

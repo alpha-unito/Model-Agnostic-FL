@@ -2,7 +2,7 @@ import queue
 import time
 from logging import getLogger
 
-from openfl.component.aggregation_functions import WeightedAverage
+from openfl.component.aggregation_functions.weighted_average import WeightedAverage
 from openfl.component.aggregator import *
 from openfl.protocols import ModelProto
 from openfl.protocols import utils
@@ -398,7 +398,7 @@ class Aggregator(Aggregator):
             agg_tensor_key = TensorKey(tensor_name, origin, round_number, report, new_tags)
             agg_tensor_name, agg_origin, agg_round_number, agg_report, agg_tags = agg_tensor_key
             # TODO: This if can be removed (maybe) (with a well-configurated plan)
-            agg_function = task_agg_function if task_name == '2_adaboost_validate' else WeightedAverage() if 'metric' in tags else task_agg_function
+            agg_function = task_agg_function if task_name == '2_weak_learners_validate' else WeightedAverage() if 'metric' in tags else task_agg_function
             agg_results = self.tensor_db.get_aggregated_tensor(
                 agg_tensor_key, collaborator_weight_dict, aggregation_function=agg_function)
             if report:
@@ -436,7 +436,7 @@ class Aggregator(Aggregator):
                 #        self._save_model(round_number, self.best_state_path)
             if 'trained' in tags:
                 self._prepare_trained(tensor_name, origin, round_number, report, agg_results)
-            if task_name == '2_adaboost_validate':
+            if task_name == '2_weak_learners_validate':
                 self._prepare_adaboost(tensor_name, origin, round_number, report, agg_results)
 
     def _save_model(self, round_number, file_path):

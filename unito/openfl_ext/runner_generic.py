@@ -309,29 +309,24 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
         origin = 'LOCAL'
         if 'apply' in kwargs:
             origin = 'GLOBAL' if kwargs['apply'] == 'global' else 'LOCAL'
+        required_tensorkeys_for_function = self.required_tensorkeys_for_function[
+            'global_model_dict_val'] if origin == 'GLOBAL' else self.required_tensorkeys_for_function[
+            'local_model_dict']
 
         if 'retrieve' in kwargs:
-            if kwargs['retrieve'] == 'weak_learner':
-                return [
-                    TensorKey(tensor_name, origin, 0, False, ('weak_learner',))
-                    for tensor_name in self.required_tensorkeys_for_function['global_model_dict_val']
-                ]
-            elif kwargs['retrieve'] == 'adaboost_coeff':
-                return [
-                    TensorKey(tensor_name, origin, 0, False, ('adaboost_coeff',))
-                    for tensor_name in self.required_tensorkeys_for_function['global_model_dict_val']
-                ]
-            elif kwargs['retrieve'] == 'adaboost':
-                return [TensorKey('generic_model', origin, 0, False, ('adaboost',))]
+            return [
+                TensorKey(tensor_name, origin, 0, False, (kwargs['retrieve'],))
+                for tensor_name in required_tensorkeys_for_function
+            ]
         else:
             if 'apply' not in kwargs:
                 return [
-                    TensorKey(tensor_name, 'LOCAL', 0, False, ('weak_learner',))
-                    for tensor_name in self.required_tensorkeys_for_function['local_model_dict']
-                ]  # + [
-                #    TensorKey(tensor_name, 'GLOBAL', 0, False, ('model', loader))
-                #    for tensor_name in self.required_tensorkeys_for_function['global_model_dict']
-                # ]
+                           TensorKey(tensor_name, 'LOCAL', 0, False, ('weak_learner',))
+                           for tensor_name in self.required_tensorkeys_for_function['local_model_dict']
+                       ] + [
+                           TensorKey(tensor_name, 'GLOBAL', 0, False, ('model',))
+                           for tensor_name in self.required_tensorkeys_for_function['global_model_dict']
+                       ]
             elif kwargs['apply'] == 'local':
                 return [
                     TensorKey(tensor_name, 'LOCAL', 0, False, ('trained',))
