@@ -118,8 +118,8 @@ class FLExperiment(FLExperiment):
             'device_assignment_policy'] = device_assignment_policy
 
         # DataLoader part
-        for setting, value in data_loader.kwargs.items():
-            plan.config['data_loader']['settings'][setting] = value
+        # for setting, value in data_loader.kwargs.items():
+        #    plan.config['data_loader']['settings'][setting] = value
 
         # Tasks part
         # @TODO This is the responsable for the overriding of the provided plan - should be integrated in a smarter way
