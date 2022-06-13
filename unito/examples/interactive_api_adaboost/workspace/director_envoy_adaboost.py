@@ -2,10 +2,11 @@ import numpy as np
 from openfl.interface.interactive_api.experiment import ModelInterface
 from sklearn.exceptions import NotFittedError
 from sklearn.metrics import accuracy_score
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.utils.validation import check_is_fitted
 
 from IrisDataset import IrisDataset
-from MyModel import MyRandomForestClassifier
+from MyModel import AdaBoostF
 from unito.openfl_ext.experiment import FLExperiment, TaskInterface
 from unito.openfl_ext.federation import Federation
 
@@ -87,7 +88,8 @@ def adaboost_update(model, val_loader, device):
 federation = Federation(client_id=client_id, director_node_fqdn=director_node_fqdn, director_port='50052', tls=False)
 fl_experiment = FLExperiment(federation=federation, experiment_name="director_envoy_RF",
                              serializer_plugin='openfl.plugins.interface_serializer.dill_serializer.DillSerializer')  # Perché non lo prende dal plan?
-model_interface = ModelInterface(model=MyRandomForestClassifier(), optimizer=None,
+model_interface = ModelInterface(model=AdaBoostF(base_estimator=DecisionTreeClassifier(), random_state=random_state),
+                                 optimizer=None,
                                  framework_plugin='unito.openfl_ext.generic_adapter.GenericAdapter')
 federated_dataset = IrisDataset(random_state=random_state)
 

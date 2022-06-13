@@ -18,11 +18,12 @@
 
 
 params:
-  cuda_devices: []
+  cuda_devices: [ ]
 
 shard_descriptor:
-  template: mnist_shard_descriptor.MnistShardDescriptor
+  template: iris_shard_descriptor.IrisShardDescriptor
   params:
-    data_path: mnist_data
-    sample_shape: ['28', '28', '1']
-    target_shape: ['28', '28', '1']
+    data_path: iris_data
+    sample_shape: [ '4' ]
+    target_shape: [ '1' ]
+    rank_worldsize: 2, 2

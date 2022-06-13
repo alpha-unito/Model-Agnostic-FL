@@ -1,12 +1,12 @@
 import numpy as np
 from sklearn.ensemble import AdaBoostClassifier
-from sklearn.tree import DecisionTreeClassifier
 
 
-class MyRandomForestClassifier(AdaBoostClassifier):
-    def __init__(self):
-        super(MyRandomForestClassifier, self).__init__(n_estimators=1,
-                                                       base_estimator=DecisionTreeClassifier(max_depth=2))
+class AdaBoostF(AdaBoostClassifier):
+    def __init__(self, base_estimator, random_state):
+        super().__init__(n_estimators=1,
+                         base_estimator=base_estimator,
+                         random_state=random_state)
 
     def add(self, weak_learner, coeff):
         self.estimators_.append(weak_learner)
