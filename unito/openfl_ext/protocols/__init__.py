@@ -11,11 +11,13 @@ from .federation_pb2 import NamedTensor
 from .federation_pb2 import TaskResults
 from .federation_pb2 import TasksRequest
 from .federation_pb2 import TasksResponse
+from .federation_pb2 import SynchRequest
+from .federation_pb2 import SynchResponse
 from .federation_pb2 import TensorRequest
 from .federation_pb2 import TensorResponse
-from .federation_pb2_grpc import add_AggregatorServicer_to_server
 from .federation_pb2_grpc import AggregatorServicer
 from .federation_pb2_grpc import AggregatorStub
+from .federation_pb2_grpc import add_AggregatorServicer_to_server
 
 __all__ = [
     'Acknowledgement',
@@ -26,7 +28,9 @@ __all__ = [
     'NamedTensor',
     'TaskResults',
     'TasksRequest',
+    'SynchRequest',
     'TasksResponse',
+    'SynchResponse',
     'TensorRequest',
     'TensorResponse',
     'add_AggregatorServicer_to_server',

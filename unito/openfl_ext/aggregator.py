@@ -115,6 +115,82 @@ class Aggregator(Aggregator):
 
         # self.log_metric = write_metric
 
+    @staticmethod
+    def _get_sleep_time():
+        """
+        Sleep 10 seconds.
+
+        Returns:
+            sleep_time: int
+        """
+        # Decrease sleep period for finer discretezation
+        return 10
+
+    def get_tasks(self, collaborator_name):
+        """
+        RPC called by a collaborator to determine which tasks to perform.
+
+        Args:
+            collaborator_name: str
+                Requested collaborator name
+
+        Returns:
+            tasks: list[str]
+                List of tasks to be performed by the requesting collaborator
+                for the current round.
+            sleep_time: int
+            time_to_quit: bool
+        """
+        self.logger.debug(
+            f'Aggregator GetTasks function reached from collaborator {collaborator_name}...'
+        )
+
+        # first, if it is time to quit, inform the collaborator
+        if self._time_to_quit():
+            self.logger.info(f'Sending signal to collaborator {collaborator_name} to shutdown...')
+            self.quit_job_sent_to.append(collaborator_name)
+
+            tasks = None
+            sleep_time = 0
+            time_to_quit = True
+
+            return tasks, self.round_number, sleep_time, time_to_quit
+
+        time_to_quit = False
+
+        # otherwise, get the tasks from our task assigner
+        tasks = self.assigner.get_tasks_for_collaborator(
+            collaborator_name,
+            self.round_number)  # fancy task assigners may want aggregator state
+
+        # if no tasks, tell the collaborator to sleep
+        if len(tasks) == 0:
+            tasks = None
+            sleep_time = self._get_sleep_time()
+
+            return tasks, self.round_number, sleep_time, time_to_quit
+
+        # if we do have tasks, remove any that we already have results for
+        tasks = [
+            t for t in tasks if not self._collaborator_task_completed(
+                collaborator_name, t, self.round_number)
+        ]
+
+        # Do the check again because it's possible that all tasks have
+        # been completed
+        if len(tasks) == 0:
+            tasks = None
+            sleep_time = self._get_sleep_time()
+
+            return tasks, self.round_number, sleep_time, time_to_quit
+
+        self.logger.info(
+            f'Sending tasks to collaborator {collaborator_name} for round {self.round_number}'
+        )
+        sleep_time = 0
+
+        return tasks, self.round_number, sleep_time, time_to_quit
+
     def _load_initial_tensors_from_dict(self, tensor_dict):
         """
         Load all of the tensors required to begin federated learning.
@@ -322,6 +398,21 @@ class Aggregator(Aggregator):
         if self._is_task_done(task_name):
             # now check for the end of the round
             self._end_of_round_check(task_name)
+
+    def synch(self, task_name):
+        return self._is_task_done(task_name)
+
+    def _is_task_done(self, task_name):
+        """Check that task is done."""
+        collaborators_needed = self.assigner.get_collaborators_for_task(
+            task_name, self.round_number
+        ) if self.round_number < self.rounds_to_train else []
+
+        return all([
+            self._collaborator_task_completed(
+                c, task_name, self.round_number
+            ) for c in collaborators_needed
+        ])
 
     def _end_of_round_check(self, task_name):
         """
@@ -664,7 +755,7 @@ class Aggregator(Aggregator):
 
             if nparray is None:
                 self.logger.info(f'Aggregator does not have an aggregated tensor for {tensor_key}. Retrying')
-                time.sleep(3)
+                time.sleep(5)
                 # raise ValueError(f'Aggregator does not have an aggregated tensor for {tensor_key}')
 
         # quite a bit happens in here, including compression, delta handling,
@@ -730,7 +821,7 @@ class Aggregator(Aggregator):
 
             if nparray is None:
                 self.logger.info(f'Aggregator does not have a tensor for {tensor_key}. Retrying')
-                time.sleep(3)
+                time.sleep(5)
                 # raise ValueError(f'Aggregator does not have a tensor for {tensor_key}')
 
         # quite a bit happens in here, including compression, delta handling,

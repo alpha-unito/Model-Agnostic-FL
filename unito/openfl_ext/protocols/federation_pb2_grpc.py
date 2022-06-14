@@ -19,6 +19,11 @@ class AggregatorStub(object):
                 request_serializer=federation__pb2.TasksRequest.SerializeToString,
                 response_deserializer=federation__pb2.TasksResponse.FromString,
                 )
+        self.GetSynch = channel.unary_unary(
+                '/Aggregator/GetSynch',
+                request_serializer=federation__pb2.SynchRequest.SerializeToString,
+                response_deserializer=federation__pb2.SynchResponse.FromString,
+                )
         self.GetAggregatedTensor = channel.unary_unary(
                 '/Aggregator/GetAggregatedTensor',
                 request_serializer=federation__pb2.TensorRequest.SerializeToString,
@@ -40,6 +45,12 @@ class AggregatorServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetTasks(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSynch(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -70,6 +81,11 @@ def add_AggregatorServicer_to_server(servicer, server):
                     servicer.GetTasks,
                     request_deserializer=federation__pb2.TasksRequest.FromString,
                     response_serializer=federation__pb2.TasksResponse.SerializeToString,
+            ),
+            'GetSynch': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSynch,
+                    request_deserializer=federation__pb2.SynchRequest.FromString,
+                    response_serializer=federation__pb2.SynchResponse.SerializeToString,
             ),
             'GetAggregatedTensor': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAggregatedTensor,
@@ -110,6 +126,23 @@ class Aggregator(object):
         return grpc.experimental.unary_unary(request, target, '/Aggregator/GetTasks',
             federation__pb2.TasksRequest.SerializeToString,
             federation__pb2.TasksResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetSynch(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Aggregator/GetSynch',
+            federation__pb2.SynchRequest.SerializeToString,
+            federation__pb2.SynchResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

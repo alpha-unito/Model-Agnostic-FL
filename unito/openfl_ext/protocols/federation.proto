@@ -4,6 +4,7 @@ syntax = "proto2";
 
 service Aggregator {
     rpc GetTasks(TasksRequest)                  returns (TasksResponse) {}
+    rpc GetSynch(SynchRequest)                  returns (SynchResponse) {}
     rpc GetAggregatedTensor(TensorRequest)      returns (TensorResponse) {}
     rpc GetTensor(TensorRequest)                returns (TensorResponse) {}
     rpc SendLocalTaskResults(stream DataStream) returns (Acknowledgement) {}
@@ -26,12 +27,22 @@ message TasksRequest {
     required MessageHeader header = 1;
 }
 
+message SynchRequest {
+    required MessageHeader header = 1;
+    required string task_name = 2;
+}
+
 message TasksResponse {
     required MessageHeader  header       = 1;
     required int32          round_number = 2;
-    repeated string         tasks        = 3;  // these next three are exclusive. Oneof is probably a good idea
+    repeated string         tasks        = 3;  // these next three are exclusive. One of is probably a good idea
     required int32          sleep_time   = 4;  // these three are exclusive
     required bool           quit         = 5;  // these three are exclusive
+}
+
+message SynchResponse {
+    required MessageHeader  header       = 1;
+    required bool           is_completed = 2;
 }
 
 message TensorRequest {

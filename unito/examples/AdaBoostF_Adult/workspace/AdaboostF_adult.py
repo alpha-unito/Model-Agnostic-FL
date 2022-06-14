@@ -87,7 +87,7 @@ def adaboost_update(model, val_loader, device):
 
 federation = Federation(client_id=client_id, director_node_fqdn=director_node_fqdn, director_port='50052', tls=False)
 fl_experiment = FLExperiment(federation=federation, experiment_name="AdaboostF_adult",
-                             serializer_plugin='openfl.plugins.interface_serializer.dill_serializer.DillSerializer')  # Perché non lo prende dal plan?
+                             serializer_plugin='openfl.plugins.interface_serializer.dill_serializer.DillSerializer')
 model_interface = ModelInterface(model=AdaBoostF(base_estimator=DecisionTreeClassifier(), random_state=random_state),
                                  optimizer=None,
                                  framework_plugin='unito.openfl_ext.generic_adapter.GenericAdapter')

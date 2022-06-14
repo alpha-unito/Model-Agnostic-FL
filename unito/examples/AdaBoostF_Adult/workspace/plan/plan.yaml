@@ -18,13 +18,13 @@ api_layer:
 assigner:
   settings:
     task_groups:
-      - name: train_and_validate
-        percentage: 1.0
-        tasks:
-          - 1_train
-          - 2_weak_learners_validate
-          - 3_adaboost_update
-          - 4_adaboost_validate
+    - name: train_and_validate
+      percentage: 1.0
+      tasks:
+      - 1_train
+      - 2_weak_learners_validate
+      - 3_adaboost_update
+      - 4_adaboost_validate
   template: unito.openfl_ext.assigner.Assigner
 collaborator:
   settings:
@@ -35,7 +35,7 @@ collaborator:
     opt_treatment: CONTINUE_GLOBAL
   template: unito.openfl_ext.collaborator.Collaborator
 compression_pipeline:
-  settings: { }
+  settings: {}
   template: unito.openfl_ext.generic_pipeline.GenericPipeline
 network:
   settings:
@@ -50,7 +50,7 @@ network:
 task_runner:
   required_plugin_components:
     framework_adapters: unito.openfl_ext.generic_adapter.GenericAdapter
-  settings: { }
+  settings: {}
   template: unito.openfl_ext.runner_generic.GenericTaskRunner
 tasks:
   1_train:
@@ -80,4 +80,4 @@ tasks:
       apply: local
       data: test
       retrieve: adaboost
-  settings: { }
+  settings: {}

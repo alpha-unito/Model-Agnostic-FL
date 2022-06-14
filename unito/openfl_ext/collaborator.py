@@ -257,6 +257,14 @@ class Collaborator(Collaborator):
         # this function
 
         self.send_task_results(global_output_tensor_dict, round_number, task, kwargs)
+        # TODO: This sleep must be eliminated with something smarter
+        sleep(5)
+        while not self.synch(task, self.collaborator_name):
+            sleep(1)
+
+    def synch(self, task_name, collaborator_name):
+        self.logger.info('Waiting for global task completion...')
+        return self.client.synch(task_name, collaborator_name)
 
     def send_task_results(self, tensor_dict, round_number, task_name, kwargs):
         """Send task results to the aggregator."""
