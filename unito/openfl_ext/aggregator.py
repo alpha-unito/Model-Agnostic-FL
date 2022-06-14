@@ -2,6 +2,7 @@ import queue
 import time
 from logging import getLogger
 
+import numpy as np
 from openfl.component.aggregation_functions.weighted_average import WeightedAverage
 from openfl.component.aggregator import *
 from openfl.protocols import ModelProto
@@ -184,6 +185,10 @@ class Aggregator(Aggregator):
                 named_tensor, collaborator_name
             )
             if 'metric' in tensor_key.tags:
+                if isinstance(nparray, np.ndarray):
+                    nparray = nparray.tolist()
+                    if not isinstance(nparray, list):
+                        nparray = [nparray]
                 metric_dict = {
                     'metric_origin': tensor_key.tags[-1],
                     'task_name': task_name,
@@ -402,6 +407,10 @@ class Aggregator(Aggregator):
             agg_results = self.tensor_db.get_aggregated_tensor(
                 agg_tensor_key, collaborator_weight_dict, aggregation_function=agg_function)
             if report:
+                if isinstance(agg_results, np.ndarray):
+                    agg_results = agg_results.tolist()
+                    if not isinstance(agg_results, list):
+                        agg_results = [agg_results]
                 # Print the aggregated metric
                 metric_dict = {
                     'metric_origin': 'Aggregator',
@@ -655,7 +664,7 @@ class Aggregator(Aggregator):
 
             if nparray is None:
                 self.logger.info(f'Aggregator does not have an aggregated tensor for {tensor_key}. Retrying')
-                time.sleep(1)
+                time.sleep(3)
                 # raise ValueError(f'Aggregator does not have an aggregated tensor for {tensor_key}')
 
         # quite a bit happens in here, including compression, delta handling,
@@ -721,7 +730,7 @@ class Aggregator(Aggregator):
 
             if nparray is None:
                 self.logger.info(f'Aggregator does not have a tensor for {tensor_key}. Retrying')
-                time.sleep(1)
+                time.sleep(3)
                 # raise ValueError(f'Aggregator does not have a tensor for {tensor_key}')
 
         # quite a bit happens in here, including compression, delta handling,

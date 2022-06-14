@@ -54,7 +54,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
                     task_kwargs[task_contract['optimizer']] = self.optimizer
 
                 # @TODO: Too much ad-hoc
-                if task_name == "train":
+                if task_name == "train_adaboost":
                     task_kwargs[task_contract['optimizer']] = None
                     task_kwargs[task_contract['adaboost_coeff']] = kwargs['adaboost_coeff']
                 if task_name == "validate_weak_learners":

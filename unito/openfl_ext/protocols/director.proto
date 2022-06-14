@@ -158,7 +158,7 @@ message StreamMetricsResponse {
     string metric_origin = 1;
     string task_name = 2;
     string metric_name = 3;
-    float metric_value = 4;
+    repeated float metric_value = 4;
     uint32 round = 5;
 }
 

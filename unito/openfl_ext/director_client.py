@@ -1,9 +1,9 @@
 import logging
 
-from openfl.transport.grpc.director_client import DirectorClient
+from openfl.protocols import director_pb2
 from openfl.protocols.utils import construct_model_proto
 from openfl.protocols.utils import deconstruct_model_proto
-from openfl.protocols import director_pb2
+from openfl.transport.grpc.director_client import DirectorClient
 
 from unito.openfl_ext.generic_pipeline import GenericPipeline
 

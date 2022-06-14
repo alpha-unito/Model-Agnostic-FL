@@ -20,6 +20,15 @@ class ModelStatus:
 
 class FLExperiment(FLExperiment):
 
+    def __init__(
+            self,
+            federation,
+            experiment_name: str = None,
+            serializer_plugin: str = 'openfl.plugins.interface_serializer.'
+                                     'cloudpickle_serializer.CloudpickleSerializer'
+    ) -> None:
+        super().__init__(federation=federation, experiment_name=experiment_name, serializer_plugin=serializer_plugin)
+
     def start(self, *, model_provider, task_keeper, data_loader,
               rounds_to_train, delta_updates=False, opt_treatment='RESET',
               device_assignment_policy='CPU_ONLY', nn=True, default=False):
@@ -169,6 +178,20 @@ class FLExperiment(FLExperiment):
                 and 'function' in plan.config['tasks'][entry])
         ]
         self.plan = deepcopy(plan)
+
+    def stream_metrics(self, tensorboard_logs: bool = True) -> None:
+        """Stream metrics."""
+        self._assert_experiment_accepted()
+        for metric_message_dict in self.federation.dir_client.stream_metrics(self.experiment_name):
+            print(metric_message_dict)
+            self.logger.metric(
+                f'Round {metric_message_dict["round"]}, '
+                f'collaborator {metric_message_dict["metric_origin"]} '
+                f'{metric_message_dict["task_name"]} result '
+                f'{metric_message_dict["metric_name"]}:\t{metric_message_dict["metric_value"]}')
+
+            if tensorboard_logs:
+                self.write_tensorboard_metric(metric_message_dict)
 
 
 class TaskInterface(TaskInterface):
