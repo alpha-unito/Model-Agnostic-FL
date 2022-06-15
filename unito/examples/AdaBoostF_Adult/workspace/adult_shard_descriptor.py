@@ -16,13 +16,13 @@ logger = logging.getLogger(__name__)
 class AdultShardDataset(ShardDataset):
     """Mnist Shard dataset class."""
 
-    def __init__(self, x, y, data_type, rank=1, worldsize=1):
+    def __init__(self, x, y, data_type, rank=1, worldsize=1, complete=False):
         """Initialize TinyImageNetDataset."""
         self.data_type = data_type
         self.rank = rank
         self.worldsize = worldsize
-        self.x = x[self.rank - 1::self.worldsize]
-        self.y = y[self.rank - 1::self.worldsize]
+        self.x = x if complete else x[self.rank - 1::self.worldsize]
+        self.y = y if complete else y[self.rank - 1::self.worldsize]
 
     def get_data(self):
         return self.x, self.y
@@ -57,7 +57,7 @@ class AdultShardDescriptor(ShardDescriptor):
         """Get available shard dataset types."""
         return list(self.data_by_type)
 
-    def get_dataset(self, dataset_type='train'):
+    def get_dataset(self, dataset_type='train', complete=False):
         """Return a shard dataset by type."""
         if dataset_type not in self.data_by_type:
             raise Exception(f'Wrong dataset type: {dataset_type}')
@@ -65,7 +65,8 @@ class AdultShardDescriptor(ShardDescriptor):
             *self.data_by_type[dataset_type],
             data_type=dataset_type,
             rank=self.rank,
-            worldsize=self.worldsize
+            worldsize=self.worldsize,
+            complete=complete
         )
 
     @property

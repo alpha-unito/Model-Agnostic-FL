@@ -223,11 +223,12 @@ class Collaborator(Collaborator):
             input_tensor_dict = input_tensor_dict['generic_model']
             coeff = input_tensor_dict[0]
             best_model = int(input_tensor_dict[1])
-
-            self.adaboost_coeff = [self.adaboost_coeff[i] * np.exp(-coeff * ((-1) ** self.errors[best_model][i]))
+            print(self.adaboost_coeff)
+            self.adaboost_coeff = [self.adaboost_coeff[i] * np.exp(coeff * self.errors[best_model][i])
                                    for i in range(self.task_runner.get_train_data_size())]
             self.adaboost_coeff /= sum(self.adaboost_coeff)
-
+            print(self.adaboost_coeff)
+            print(sum(self.adaboost_coeff))
             adaboost = self.tensor_db.get_tensor_from_cache(TensorKey(
                 'generic_model',
                 self.collaborator_name,
@@ -258,9 +259,10 @@ class Collaborator(Collaborator):
 
         self.send_task_results(global_output_tensor_dict, round_number, task, kwargs)
         # TODO: This sleep must be eliminated with something smarter
-        sleep(5)
-        while not self.synch(task, self.collaborator_name):
-            sleep(1)
+        if task == '1_train' or task == '2_weak_learners_validate':
+            sleep(5)
+        # while not self.synch(task, self.collaborator_name):
+        #    sleep(1)
 
     def synch(self, task_name, collaborator_name):
         self.logger.info('Waiting for global task completion...')

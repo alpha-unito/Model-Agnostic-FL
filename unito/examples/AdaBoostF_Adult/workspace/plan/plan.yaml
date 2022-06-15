@@ -5,7 +5,7 @@ aggregator:
     init_state_path: save/init.pbuf
     last_state_path: save/last.pbuf
     nn: false
-    rounds_to_train: 3
+    rounds_to_train: 300
   template: unito.openfl_ext.aggregator.Aggregator
 api_layer:
   required_plugin_components:

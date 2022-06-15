@@ -3,10 +3,8 @@ from sklearn.ensemble import AdaBoostClassifier
 
 
 class AdaBoostF(AdaBoostClassifier):
-    def __init__(self, base_estimator, random_state):
-        super().__init__(n_estimators=1,
-                         base_estimator=base_estimator,
-                         random_state=random_state)
+    def __init__(self, base_estimator):
+        super().__init__(n_estimators=1, base_estimator=base_estimator)
 
     def add(self, weak_learner, coeff):
         self.estimators_.append(weak_learner)

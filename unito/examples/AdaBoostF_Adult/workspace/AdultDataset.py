@@ -20,7 +20,7 @@ class AdultDataset(DataInterface):
         self._shard_descriptor = shard_descriptor
 
         self.train = shard_descriptor.get_dataset('train')
-        self.test = shard_descriptor.get_dataset('val')
+        self.test = shard_descriptor.get_dataset('val', complete=True)
 
     def __getitem__(self, index):
         return self.shard_descriptor[index]

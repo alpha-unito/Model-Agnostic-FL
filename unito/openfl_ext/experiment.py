@@ -183,7 +183,6 @@ class FLExperiment(FLExperiment):
         """Stream metrics."""
         self._assert_experiment_accepted()
         for metric_message_dict in self.federation.dir_client.stream_metrics(self.experiment_name):
-            print(metric_message_dict)
             self.logger.metric(
                 f'Round {metric_message_dict["round"]}, '
                 f'collaborator {metric_message_dict["metric_origin"]} '
