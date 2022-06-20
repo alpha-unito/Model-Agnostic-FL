@@ -9,17 +9,23 @@ class AggregateAdaboost(AggregationFunction):
 
     def call(self, local_tensors, *_):
         tensors = [x.tensor for x in local_tensors]
-        sums = []
-        for i in range(len(tensors)):
+
+        partial = []
+        for tensor in tensors:
+            partial.append(tensor[-1])
+        norm = sum(partial)
+
+        errors = []
+        for i in range(len(tensors[0]) - 1):
             partial = []
             for tensor in tensors:
                 partial.append(tensor[i])
-            sums.append(sum(partial) / len(tensors))
+            partial = np.array(partial)
+            errors.append(partial.sum() / norm)
 
-        c = np.argmin(sums)
-        # e = (1 / (len(sums))) * sum([tensor[c] for tensor in tensors])
-        # print(e)
-        # a = np.log((1.0 - e) / (e + 1e-10)) + np.log(n_classes - 1)
-        a = np.log((1.0 - sums[c]) / (sums[c] + 1e-10)) + np.log(n_classes - 1)
+        errors = np.array(errors)
+        best_model = np.argmin(errors)
+        best_error = errors[best_model]
+        alpha = np.log((1.0 - best_error) / (best_error + 1e-10)) + np.log(n_classes - 1)
 
-        return np.array([a, c])
+        return np.array([alpha, best_model])

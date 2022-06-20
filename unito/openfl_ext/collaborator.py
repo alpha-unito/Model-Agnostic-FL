@@ -81,7 +81,7 @@ class Collaborator(Collaborator):
         self.logger = getLogger(__name__)
 
         # @TODO: AdaBoost variables
-        self.adaboost_coeff = [1 / self.task_runner.get_train_data_size()] * self.task_runner.get_train_data_size()
+        self.adaboost_coeff = np.ones(self.task_runner.get_train_data_size())
         self.model_buffer = None
         self.errors = []
 
@@ -221,14 +221,11 @@ class Collaborator(Collaborator):
         if task == '3_adaboost_update':
             # @TODO assign a better name too this
             input_tensor_dict = input_tensor_dict['generic_model']
-            coeff = input_tensor_dict[0]
+            alpha = input_tensor_dict[0]
             best_model = int(input_tensor_dict[1])
-            print(self.adaboost_coeff)
-            self.adaboost_coeff = [self.adaboost_coeff[i] * np.exp(coeff * self.errors[best_model][i])
-                                   for i in range(self.task_runner.get_train_data_size())]
-            self.adaboost_coeff /= sum(self.adaboost_coeff)
-            print(self.adaboost_coeff)
-            print(sum(self.adaboost_coeff))
+
+            self.adaboost_coeff = np.array([self.adaboost_coeff[i] * np.exp(alpha * self.errors[best_model][i])
+                                            for i in range(self.task_runner.get_train_data_size())])
             adaboost = self.tensor_db.get_tensor_from_cache(TensorKey(
                 'generic_model',
                 self.collaborator_name,
@@ -238,9 +235,9 @@ class Collaborator(Collaborator):
             ))
 
             if adaboost is not None:
-                adaboost.add(self.model_buffer.get(best_model), coeff)
+                adaboost.add(self.model_buffer.get(best_model), alpha)
             else:
-                adaboost = self.model_buffer.replace(self.model_buffer.get(best_model), coeff)
+                adaboost = self.model_buffer.replace(self.model_buffer.get(best_model), alpha)
 
             self.tensor_db.cache_tensor({TensorKey(
                 'generic_model',

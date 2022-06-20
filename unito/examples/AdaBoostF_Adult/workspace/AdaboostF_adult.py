@@ -1,16 +1,14 @@
 import numpy as np
 from openfl.interface.interactive_api.experiment import ModelInterface
-from sklearn.exceptions import NotFittedError
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.utils.validation import check_is_fitted
 
 from AdultDataset import AdultDataset
 from unito.examples.AdaBoostF_Adult.director.adaboost import AdaBoostF
 from unito.openfl_ext.experiment import FLExperiment, TaskInterface
 from unito.openfl_ext.federation import Federation
 
-# random_state = np.random.RandomState(31415)
+random_state = np.random.RandomState(31415)
 
 client_id = 'api'
 cert_dir = '../cert'
@@ -22,14 +20,17 @@ task_interface = TaskInterface()
 @task_interface.register_fl_task(model='model', data_loader='train_loader', device='device', optimizer='optimizer',
                                  adaboost_coeff='adaboost_coeff')
 def train_adaboost(model, train_loader, device, optimizer, adaboost_coeff):
-    if model is not None:
-        print(model)
-        X, y = train_loader
-        model.fit(X, y, np.array(adaboost_coeff))
-        pred = model.predict(X)
-        metric = accuracy_score(y, pred, normalize=True)
-    else:
-        metric = 0
+    weak_learner = model.get(0)
+
+    X, y = train_loader
+    X = np.array(X)
+    y = np.array(y)
+    adaboost_coeff = np.array(adaboost_coeff)
+    ids = np.random.choice(X.shape[0], size=X.shape[0], replace=True, p=adaboost_coeff / adaboost_coeff.sum())
+    weak_learner.fit(X[ids], y[ids])
+
+    pred = weak_learner.predict(X)
+    metric = accuracy_score(y, pred)
 
     return {'accuracy': metric}
 
@@ -37,43 +38,31 @@ def train_adaboost(model, train_loader, device, optimizer, adaboost_coeff):
 @task_interface.register_fl_task(model='model', data_loader='val_loader', device='device',
                                  adaboost_coeff='adaboost_coeff')
 def validate_weak_learners(model, val_loader, device, adaboost_coeff):
+    X, y = val_loader
+    X = np.array(X)
+    y = np.array(y)
+    adaboost_coeff = np.array(adaboost_coeff)
+
     error = []
     miss = []
-    try:
-        if model is not None:
-            check_is_fitted(model)
-
-            X, y = val_loader
-
-            for weak_learner in model.estimators_:
-                pred = weak_learner.predict(X)
-                error.append(
-                    sum([coeff if x_pred != x_true else 0 for x_pred, x_true, coeff in zip(pred, y, adaboost_coeff)]))
-                miss.append([1 if x_pred != x_true else 0 for x_pred, x_true in zip(pred, y)])
-        else:
-            print("Model not found")
-    except NotFittedError:
-        print("Model is not yet fit")
+    for weak_learner in model.get_estimators():
+        pred = weak_learner.predict(X)
+        error.append(sum(adaboost_coeff[y != pred]))
+        # error.append(
+        #    sum([coeff if x_pred != x_true else 0 for x_pred, x_true, coeff in zip(pred, y, adaboost_coeff)]))
+        # miss.append([1 if x_pred != x_true else 0 for x_pred, x_true in zip(pred, y)])
+        miss.append(y != pred)
+    # TODO: piccolo trick, alla fine di ogni vettore errori viene mandata la norma dei pesi locali
+    error.append(sum(adaboost_coeff))
 
     return {'errors': error}, {'misprediction': miss}
 
 
 @task_interface.register_fl_task(model='model', data_loader='val_loader', device='device')
 def validate(model, val_loader, device):
-    try:
-        if model is not None:
-            check_is_fitted(model)
-
-            X, y = val_loader
-
-            pred = model.predict(X)
-            f1 = f1_score(y, pred)
-        else:
-            print("Model not found")
-            f1 = 0
-    except NotFittedError:
-        print("Model is not yet fit")
-        f1 = 0
+    X, y = val_loader
+    pred = model.predict(np.array(X))
+    f1 = f1_score(y, pred, average="micro")
 
     return {'F1 score': f1}
 
