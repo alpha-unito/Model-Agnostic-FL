@@ -43,7 +43,8 @@ class AggregatorGRPCServer(AggregatorGRPCServer):
         self.check_request(request)
         collaborator_name = request.header.sender
         task_name = request.task_name
-        is_completed = self.aggregator.synch(task_name)
+        round_number = request.round_number
+        is_completed = self.aggregator.synch(task_name, round_number)
 
         return SynchResponse(
             header=self.get_header(collaborator_name),

@@ -24,11 +24,11 @@ class CollaboratorGRPCClient(CollaboratorGRPCClient):
         return response.tensor
 
     @_atomic_connection
-    def synch(self, task_name, collaborator_name):
+    def synch(self, task_name, round_number, collaborator_name):
         """Get tasks from the aggregator."""
         self._set_header(collaborator_name)
-        request = SynchRequest(header=self.header, task_name=task_name)
+        request = SynchRequest(header=self.header, task_name=task_name, round_number=round_number)
         response = self.stub.GetSynch(request)
         self.validate_response(response, collaborator_name)
 
-        return response
+        return response.is_completed

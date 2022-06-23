@@ -30,6 +30,7 @@ message TasksRequest {
 message SynchRequest {
     required MessageHeader header = 1;
     required string task_name = 2;
+    required int32 round_number=3;
 }
 
 message TasksResponse {

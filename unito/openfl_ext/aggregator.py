@@ -399,8 +399,9 @@ class Aggregator(Aggregator):
             # now check for the end of the round
             self._end_of_round_check(task_name)
 
-    def synch(self, task_name):
-        return self._is_task_done(task_name)
+    def synch(self, task_name, round_number):
+        result = self._is_task_done_synch(task_name, round_number)
+        return result
 
     def _is_task_done(self, task_name):
         """Check that task is done."""
@@ -411,6 +412,18 @@ class Aggregator(Aggregator):
         return all([
             self._collaborator_task_completed(
                 c, task_name, self.round_number
+            ) for c in collaborators_needed
+        ])
+
+    def _is_task_done_synch(self, task_name, round_number):
+        """Check that task is done."""
+        collaborators_needed = self.assigner.get_collaborators_for_task(
+            task_name, round_number
+        ) if round_number < self.rounds_to_train else []
+
+        return all([
+            self._collaborator_task_completed(
+                c, task_name, round_number
             ) for c in collaborators_needed
         ])
 

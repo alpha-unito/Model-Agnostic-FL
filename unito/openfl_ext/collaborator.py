@@ -256,14 +256,15 @@ class Collaborator(Collaborator):
 
         self.send_task_results(global_output_tensor_dict, round_number, task, kwargs)
         # TODO: This sleep must be eliminated with something smarter
-        #if task == '1_train' or task == '2_weak_learners_validate':
+        # if task == '1_train' or task == '2_weak_learners_validate':
         #    sleep(5)
-        # while not self.synch(task, self.collaborator_name):
-        #    sleep(1)
 
-    def synch(self, task_name, collaborator_name):
+        while not self.synch(task, round_number, self.collaborator_name):
+            sleep(1)
+
+    def synch(self, task_name, round_number, collaborator_name):
         self.logger.info('Waiting for global task completion...')
-        return self.client.synch(task_name, collaborator_name)
+        return self.client.synch(task_name, round_number, collaborator_name)
 
     def send_task_results(self, tensor_dict, round_number, task_name, kwargs):
         """Send task results to the aggregator."""
