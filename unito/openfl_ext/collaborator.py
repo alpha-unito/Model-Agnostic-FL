@@ -256,8 +256,8 @@ class Collaborator(Collaborator):
 
         self.send_task_results(global_output_tensor_dict, round_number, task, kwargs)
         # TODO: This sleep must be eliminated with something smarter
-        if task == '1_train' or task == '2_weak_learners_validate':
-            sleep(5)
+        #if task == '1_train' or task == '2_weak_learners_validate':
+        #    sleep(5)
         # while not self.synch(task, self.collaborator_name):
         #    sleep(1)
 
