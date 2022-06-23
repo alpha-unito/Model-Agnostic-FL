@@ -260,7 +260,7 @@ class Collaborator(Collaborator):
         #    sleep(5)
 
         while not self.synch(task, round_number, self.collaborator_name):
-            sleep(1)
+            sleep(0.5)
 
     def synch(self, task_name, round_number, collaborator_name):
         self.logger.info('Waiting for global task completion...')
