@@ -4,19 +4,18 @@
 """Mnist Shard Descriptor."""
 
 import logging
-import os
 from typing import List
 
-import dload
 import pandas as pd
-from numpy.random import permutation
 from openfl.interface.interactive_api.shard_descriptor import ShardDataset
 from openfl.interface.interactive_api.shard_descriptor import ShardDescriptor
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
 logger = logging.getLogger(__name__)
 
 
-class forestcoverShardDataset(ShardDataset):
+class letterShardDataset(ShardDataset):
     """Mnist Shard dataset class."""
 
     def __init__(self, x, y, data_type, rank=1, worldsize=1, complete=False):
@@ -39,7 +38,7 @@ class forestcoverShardDataset(ShardDataset):
         return len(self.x)
 
 
-class forestcoverShardDescriptor(ShardDescriptor):
+class letterShardDescriptor(ShardDescriptor):
     """Mnist Shard descriptor class."""
 
     def __init__(
@@ -64,7 +63,7 @@ class forestcoverShardDescriptor(ShardDescriptor):
         """Return a shard dataset by type."""
         if dataset_type not in self.data_by_type:
             raise Exception(f'Wrong dataset type: {dataset_type}')
-        return forestcoverShardDataset(
+        return letterShardDataset(
             *self.data_by_type[dataset_type],
             data_type=dataset_type,
             rank=self.rank,
@@ -75,7 +74,7 @@ class forestcoverShardDescriptor(ShardDescriptor):
     @property
     def sample_shape(self):
         """Return the sample shape info."""
-        return ['14']
+        return ['16']
 
     @property
     def target_shape(self):
@@ -89,15 +88,10 @@ class forestcoverShardDescriptor(ShardDescriptor):
                 f' out of {self.worldsize}')
 
     def download_data(self):
-        if not os.path.isfile("../forestcover_dataset/covtype.data"):
-            dload.save_unzip(
-                "https://archive.ics.uci.edu/ml/machine-learning-databases/covtype/covtype.data.gz")
-        covtype_df = pd.read_csv("../forestcover_dataset/covtype.data", header=None)
-        covtype_df = covtype_df[covtype_df[54] < 3]
-        X = covtype_df.loc[:, :53].to_numpy()
-        y = (covtype_df.loc[:, 54] - 1).to_numpy()
-        ids = permutation(X.shape[0])
-        X, y = X[ids], y[ids]
-        X_train, X_test = X[:250000], X[250000:]
-        y_train, y_test = y[:250000], y[250000:]
-        return X_train, X_test, y_train, y_test
+        df = pd.read_csv("../letter_dataset/letter.csv", header=None)
+        feats = ["feat_%d" % i for i in range(df.shape[1] - 1)]
+        df.columns = ["label"] + feats
+        X = df[feats].to_numpy()
+        y = LabelEncoder().fit_transform(df["label"].to_numpy())
+
+        return train_test_split(X, y, test_size=0.2)

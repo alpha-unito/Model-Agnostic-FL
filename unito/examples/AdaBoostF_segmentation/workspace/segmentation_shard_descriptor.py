@@ -4,19 +4,16 @@
 """Mnist Shard Descriptor."""
 
 import logging
-import os
 from typing import List
 
-import dload
-import pandas as pd
-from numpy.random import permutation
 from openfl.interface.interactive_api.shard_descriptor import ShardDataset
 from openfl.interface.interactive_api.shard_descriptor import ShardDescriptor
+from sklearn.datasets import load_svmlight_file
 
 logger = logging.getLogger(__name__)
 
 
-class forestcoverShardDataset(ShardDataset):
+class segmentationShardDataset(ShardDataset):
     """Mnist Shard dataset class."""
 
     def __init__(self, x, y, data_type, rank=1, worldsize=1, complete=False):
@@ -39,7 +36,7 @@ class forestcoverShardDataset(ShardDataset):
         return len(self.x)
 
 
-class forestcoverShardDescriptor(ShardDescriptor):
+class segmentationShardDescriptor(ShardDescriptor):
     """Mnist Shard descriptor class."""
 
     def __init__(
@@ -64,7 +61,7 @@ class forestcoverShardDescriptor(ShardDescriptor):
         """Return a shard dataset by type."""
         if dataset_type not in self.data_by_type:
             raise Exception(f'Wrong dataset type: {dataset_type}')
-        return forestcoverShardDataset(
+        return segmentationShardDataset(
             *self.data_by_type[dataset_type],
             data_type=dataset_type,
             rank=self.rank,
@@ -89,15 +86,8 @@ class forestcoverShardDescriptor(ShardDescriptor):
                 f' out of {self.worldsize}')
 
     def download_data(self):
-        if not os.path.isfile("../forestcover_dataset/covtype.data"):
-            dload.save_unzip(
-                "https://archive.ics.uci.edu/ml/machine-learning-databases/covtype/covtype.data.gz")
-        covtype_df = pd.read_csv("../forestcover_dataset/covtype.data", header=None)
-        covtype_df = covtype_df[covtype_df[54] < 3]
-        X = covtype_df.loc[:, :53].to_numpy()
-        y = (covtype_df.loc[:, 54] - 1).to_numpy()
-        ids = permutation(X.shape[0])
-        X, y = X[ids], y[ids]
-        X_train, X_test = X[:250000], X[250000:]
-        y_train, y_test = y[:250000], y[250000:]
-        return X_train, X_test, y_train, y_test
+        X_tr, y_tr = load_svmlight_file("../segmentation_dataset/segmentation.tr.svmlight")
+        X_te, y_te = load_svmlight_file("../segmentation_dataset/segmentation.te.svmlight")
+        X_tr = X_tr.toarray()
+        X_te = X_te.toarray()
+        return X_tr, X_te, y_tr, y_te

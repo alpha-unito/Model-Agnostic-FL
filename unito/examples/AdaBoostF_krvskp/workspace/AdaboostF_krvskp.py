@@ -4,7 +4,7 @@ from sklearn.metrics import accuracy_score, f1_score
 from sklearn.tree import DecisionTreeClassifier
 
 from krvskpDataset import krvskpDataset
-from unito.examples.AdaBoostF_Adult.director.adaboost import AdaBoostF
+from unito.examples.AdaBoostF_krvskp.director.adaboost import AdaBoostF
 from unito.openfl_ext.experiment import FLExperiment, TaskInterface
 from unito.openfl_ext.federation import Federation
 
@@ -73,7 +73,7 @@ def adaboost_update(model, val_loader, device):
 
 
 federation = Federation(client_id=client_id, director_node_fqdn=director_node_fqdn, director_port='50052', tls=False)
-fl_experiment = FLExperiment(federation=federation, experiment_name="AdaboostF_adult",
+fl_experiment = FLExperiment(federation=federation, experiment_name="AdaboostF_kr-vs-kp",
                              serializer_plugin='openfl.plugins.interface_serializer.dill_serializer.DillSerializer')
 model_interface = ModelInterface(
     model=AdaBoostF(base_estimator=DecisionTreeClassifier(max_leaf_nodes=10)),

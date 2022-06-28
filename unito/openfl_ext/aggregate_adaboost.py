@@ -1,15 +1,15 @@
 import numpy as np
 from openfl.component.aggregation_functions.interface import AggregationFunction
 
-n_classes = 2
+# TODO: set this dynamically
+n_classes = 26
 
 
 class AggregateAdaboost(AggregationFunction):
     """Function for Adaboost.F aggregation"""
 
-    def call(self, local_tensors, *_):
+    def call(self, local_tensors, db_iterator, tensor_name, fl_round, tags):
         tensors = [x.tensor for x in local_tensors]
-
         partial = []
         for tensor in tensors:
             partial.append(tensor[-1])

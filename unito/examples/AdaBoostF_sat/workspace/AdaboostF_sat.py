@@ -3,8 +3,8 @@ from openfl.interface.interactive_api.experiment import ModelInterface
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.tree import DecisionTreeClassifier
 
-from forestcoverDataset import forestcoverDataset
-from unito.examples.AdaBoostF_forestcover.director.adaboost import AdaBoostF
+from satDataset import satDataset
+from unito.examples.AdaBoostF_splice.director.adaboost import AdaBoostF
 from unito.openfl_ext.experiment import FLExperiment, TaskInterface
 from unito.openfl_ext.federation import Federation
 
@@ -73,13 +73,13 @@ def adaboost_update(model, val_loader, device):
 
 
 federation = Federation(client_id=client_id, director_node_fqdn=director_node_fqdn, director_port='50052', tls=False)
-fl_experiment = FLExperiment(federation=federation, experiment_name="AdaboostF_forestcover",
+fl_experiment = FLExperiment(federation=federation, experiment_name="AdaboostF_sat",
                              serializer_plugin='openfl.plugins.interface_serializer.dill_serializer.DillSerializer')
 model_interface = ModelInterface(
-    model=AdaBoostF(base_estimator=DecisionTreeClassifier(max_leaf_nodes=10)),
+    model=AdaBoostF(base_estimator=DecisionTreeClassifier(max_leaf_nodes=10), n_classes=7),
     optimizer=None,
     framework_plugin='unito.openfl_ext.generic_adapter.GenericAdapter')
-federated_dataset = forestcoverDataset()
+federated_dataset = satDataset()
 
 fl_experiment.start(
     model_provider=model_interface,
