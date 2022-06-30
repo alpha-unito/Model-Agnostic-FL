@@ -21,9 +21,9 @@ params:
   cuda_devices: [ ]
 
 shard_descriptor:
-  template: unito.examples.AdaBoostF_kr-vs-kp.workspace.krvskp_shard_descriptor.krvskpShardDescriptor
+  template: unito.examples.AdaBoostF_krvskp.workspace.krvskp_shard_descriptor.krvskpShardDescriptor
   params:
-    data_path: ../kr-vs-kp_dataset
+    data_path: ../krvskp_dataset
     sample_shape: [ '36' ]
     target_shape: [ '1' ]
     rank_worldsize: 8, 10

@@ -67,6 +67,7 @@ tasks:
       apply: global
       data: train
       retrieve: model
+    n_classes: 4
   3_adaboost_update:
     aggregation_type: openfl.component.aggregation_functions.WeightedAverage
     function: adaboost_update

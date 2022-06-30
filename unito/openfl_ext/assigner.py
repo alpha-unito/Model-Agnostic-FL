@@ -21,6 +21,9 @@ class Assigner(RandomGroupedAssigner):
             module_path = splitext(template)[0]
             module = import_module(module_path)
             # TODO: Make it possible to pass arguments to this
-            template = getattr(module, class_name)()
+            if 'n_classes' in self.tasks[task_name]:
+                template = getattr(module, class_name)(self.tasks[task_name]['n_classes'])
+            else:
+                template = getattr(module, class_name)()
 
         return template

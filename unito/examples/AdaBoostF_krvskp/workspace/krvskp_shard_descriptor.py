@@ -74,7 +74,7 @@ class krvskpShardDescriptor(ShardDescriptor):
     @property
     def sample_shape(self):
         """Return the sample shape info."""
-        return ['14']
+        return ['36']
 
     @property
     def target_shape(self):
@@ -88,7 +88,7 @@ class krvskpShardDescriptor(ShardDescriptor):
                 f' out of {self.worldsize}')
 
     def download_data(self):
-        X, y = load_svmlight_file("../kr-vs-kp_dataset/kr-vs-kp.svmlight")
+        X, y = load_svmlight_file("../krvskp_dataset/kr-vs-kp.svmlight")
         X = X.toarray()
         y = y.astype("int")
         y = LabelEncoder().fit_transform(y)

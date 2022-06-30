@@ -9,7 +9,6 @@ from typing import List
 import pandas as pd
 from openfl.interface.interactive_api.shard_descriptor import ShardDataset
 from openfl.interface.interactive_api.shard_descriptor import ShardDescriptor
-from sklearn.preprocessing import LabelEncoder
 
 logger = logging.getLogger(__name__)
 

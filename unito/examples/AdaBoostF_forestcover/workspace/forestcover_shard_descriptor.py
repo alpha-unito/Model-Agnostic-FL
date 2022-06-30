@@ -75,7 +75,7 @@ class forestcoverShardDescriptor(ShardDescriptor):
     @property
     def sample_shape(self):
         """Return the sample shape info."""
-        return ['14']
+        return ['54']
 
     @property
     def target_shape(self):

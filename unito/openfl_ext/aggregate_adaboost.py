@@ -1,14 +1,15 @@
 import numpy as np
 from openfl.component.aggregation_functions.interface import AggregationFunction
 
-# TODO: set this dynamically
-n_classes = 26
-
 
 class AggregateAdaboost(AggregationFunction):
     """Function for Adaboost.F aggregation"""
 
-    def call(self, local_tensors, db_iterator, tensor_name, fl_round, tags):
+    def __init__(self, n_classes):
+        super(AggregateAdaboost, self).__init__()
+        self.n_classes = n_classes
+
+    def call(self, local_tensors, *_):
         tensors = [x.tensor for x in local_tensors]
         partial = []
         for tensor in tensors:
@@ -26,6 +27,6 @@ class AggregateAdaboost(AggregationFunction):
         errors = np.array(errors)
         best_model = np.argmin(errors)
         best_error = errors[best_model]
-        alpha = np.log((1.0 - best_error) / (best_error + 1e-10)) + np.log(n_classes - 1)
+        alpha = np.log((1.0 - best_error) / (best_error + 1e-10)) + np.log(self.n_classes - 1)
 
         return np.array([alpha, best_model])

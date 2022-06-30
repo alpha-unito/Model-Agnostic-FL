@@ -23,7 +23,7 @@ params:
 shard_descriptor:
   template: unito.examples.AdaBoostF_Iris.workspace.iris_shard_descriptor.IrisShardDescriptor
   params:
-    data_path: unito.examples.AdaBoostF_Iris.iris_dataset.iris_data
+    data_path: ../iris_dataset
     sample_shape: [ '4' ]
     target_shape: [ '1' ]
     rank_worldsize: 1, 2

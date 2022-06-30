@@ -4,7 +4,7 @@ from sklearn.metrics import accuracy_score, f1_score
 from sklearn.tree import DecisionTreeClassifier
 
 from pendigitsDataset import pendigitsDataset
-from unito.examples.AdaBoostF_splice.director.adaboost import AdaBoostF
+from unito.examples.AdaBoostF_pendigits.director.adaboost import AdaBoostF
 from unito.openfl_ext.experiment import FLExperiment, TaskInterface
 from unito.openfl_ext.federation import Federation
 

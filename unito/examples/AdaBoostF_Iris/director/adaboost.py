@@ -1,12 +1,15 @@
 import numpy as np
-from sklearn.ensemble import AdaBoostClassifier
 
 
-class AdaBoostF(AdaBoostClassifier):
-    def __init__(self, base_estimator, random_state):
-        super().__init__(n_estimators=1,
-                         base_estimator=base_estimator,
-                         random_state=random_state)
+class AdaBoostF:
+    def __init__(self, base_estimator, n_classes):
+        self.estimators_ = [base_estimator]
+        self.n_estimators_ = 1
+        self.estimator_weights_ = [1]
+        self.n_classes = n_classes
+
+    def get_estimators(self):
+        return self.estimators_
 
     def add(self, weak_learner, coeff):
         self.estimators_.append(weak_learner)
@@ -20,3 +23,11 @@ class AdaBoostF(AdaBoostClassifier):
         self.estimator_weights_ = np.array([coeff])
 
         return self
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        y_pred = np.zeros((np.shape(X)[0], self.n_classes))
+        for i, clf in enumerate(self.estimators_):
+            pred = clf.predict(X)
+            for j, c in enumerate(pred):
+                y_pred[j, int(c)] += self.estimator_weights_[i]
+        return np.argmax(y_pred, axis=1)
