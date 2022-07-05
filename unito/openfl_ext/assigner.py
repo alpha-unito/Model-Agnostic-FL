@@ -15,12 +15,11 @@ class Assigner(RandomGroupedAssigner):
             return None
 
         template = self.tasks[task_name]['aggregation_type']
-        # TODO: Very bad solution, should be integrated better with aggregator
+        # TODO: this should be integrated better with aggregator (and the eventual parameter should be handled better)
         if isinstance(template, str):
             class_name = splitext(template)[1].strip('.')
             module_path = splitext(template)[0]
             module = import_module(module_path)
-            # TODO: Make it possible to pass arguments to this
             if 'n_classes' in self.tasks[task_name]:
                 template = getattr(module, class_name)(self.tasks[task_name]['n_classes'])
             else:

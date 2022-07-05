@@ -6,11 +6,14 @@ import numpy as np
 from openfl.federated.task.task_runner import CoreTaskRunner
 from openfl.utilities import TensorKey
 from openfl.utilities import split_tensor_dict_for_holdouts
-from sklearn.base import BaseEstimator
 
 
-class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
+class GenericTaskRunner(CoreTaskRunner):
     """Federated Learning Task Runner Class."""
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.nn = kwargs['nn']
 
     def adapt_tasks(self):
         """
@@ -45,7 +48,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
                 self.rebuild_model(input_tensor_dict, validation=validation_flag, device=device)
                 task_kwargs = {}
                 if validation_flag:
-                    # @TODO: the presence of apply is not obvious
+                    # @TODO: the presence of apply should be checked
                     if kwargs['apply'] == 'local':
                         validation_flag = '_local'
                     else:
@@ -53,7 +56,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
                 else:
                     task_kwargs[task_contract['optimizer']] = self.optimizer
 
-                # @TODO: Too much ad-hoc
+                # @TODO: Should be generalised
                 if task_name == "train_adaboost":
                     task_kwargs[task_contract['optimizer']] = None
                     task_kwargs[task_contract['adaboost_coeff']] = kwargs['adaboost_coeff']
@@ -70,7 +73,6 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
                 # Here is the training method call
                 metric_dict = callable_task(**task_kwargs)
 
-                # @TODO: Too much ad-hoc
                 optional_output = None
                 if task_name == "validate_weak_learners":
                     optional_output = metric_dict[1]['misprediction']
@@ -102,8 +104,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
         else:
             self.set_tensor_dict(input_tensor_dict, with_opt_vars=False, device=device)
 
-    def set_tensor_dict(self, tensor_dict, with_opt_vars=False, device='cpu',
-                        nn=False):  # TODO nn should be passed from above
+    def set_tensor_dict(self, tensor_dict, with_opt_vars=False, device='cpu'):
         """Set the tensor dictionary.
 
         Args:
@@ -117,7 +118,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
         #  simple assignment is better
         # for now, state dict gives us names, which is good
         # FIXME: do both and sanity check each time?
-        if nn:
+        if self.nn:
             args = [self.model, tensor_dict]
             if with_opt_vars:
                 args.append(self.optimizer)
@@ -127,8 +128,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
         else:
             self.model = tensor_dict['generic_model']
 
-    def _prepare_tensorkeys_for_agggregation(self, metric_dict, validation_flag,
-                                             col_name, round_num, nn=False):  # TODO This should be in the plan file
+    def _prepare_tensorkeys_for_agggregation(self, metric_dict, validation_flag, col_name, round_num):
         """
         Prepare tensorkeys for aggregation.
 
@@ -145,7 +145,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
             global_model_dict, local_model_dict = split_tensor_dict_for_holdouts(
                 self.logger, output_model_dict,
                 **self.tensor_dict_split_fn_kwargs
-            ) if nn else output_model_dict, output_model_dict
+            ) if self.nn else output_model_dict, output_model_dict
 
             # Create global tensorkeys
             global_tensorkey_model_dict = {
@@ -178,7 +178,7 @@ class GenericTaskRunner(BaseEstimator, CoreTaskRunner):
             # on random data to get the optimizer names,
             # and then throwing away the model.
             if self.opt_treatment == 'CONTINUE_GLOBAL':
-                self.initialize_tensorkeys_for_functions(with_opt_vars=True if nn else False)
+                self.initialize_tensorkeys_for_functions(with_opt_vars=True if self.nn else False)
 
             # This will signal that the optimizer values are now present,
             # and can be loaded when the model is rebuilt

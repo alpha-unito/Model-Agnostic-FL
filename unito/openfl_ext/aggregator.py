@@ -77,7 +77,7 @@ class Aggregator(Aggregator):
         self.tensor_db = TensorDB(self.nn)
         # FIXME: I think next line generates an error on the second round
         # if it is set to 1 for the aggregator.
-        # @TODO: storing disabled
+        # TODO: storing disabled
         self.db_store_rounds = -1  # db_store_rounds
         self.compression_pipeline = compression_pipeline
         self.tensor_codec = TensorCodec(self.compression_pipeline)
@@ -455,7 +455,6 @@ class Aggregator(Aggregator):
         self.logger.info(f'Saving round {self.round_number} model...')
         self._save_model(self.round_number, self.last_state_path)
 
-        # TODO This needs to be fixed!
         if self._time_to_quit():
             self.logger.info('Experiment Completed. Cleaning up...')
         else:
@@ -538,7 +537,7 @@ class Aggregator(Aggregator):
                 self.metric_queue.put(metric_dict)
                 # TODO Add all of the logic for saving the model based
                 #  on best accuracy, lowest loss, etc.
-                # @TODO: this is in conflict with the exchange of arrays of metrics
+                # This is disabled for AdaBoost.F since it is in conflict with the exchange of arrays of metrics
                 # if 'validate_agg' in tags:
                 #    # Compare the accuracy of the model, and
                 #    # potentially save it
@@ -819,7 +818,8 @@ class Aggregator(Aggregator):
         if 'lossy_compressed' in tags:
             tags.remove('lossy_compressed')
 
-        # @TODO: this sucks
+        # TODO: this should be more clear
+        # AdaBoost.F TensorKey handling
         tensor_key = TensorKey(
             'errors' if 'adaboost_coeff' in tags else tensor_name, self.uuid,
             0 if 'weak_learner' in tags else round_number, True if 'adaboost_coeff' in tags else report, tuple(tags)

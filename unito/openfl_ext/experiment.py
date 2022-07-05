@@ -48,7 +48,7 @@ class FLExperiment(FLExperiment):
 
         self.logger.info('Starting experiment!')
         self.plan.resolve()
-        initial_tensor_dict = self._get_initial_tensor_dict(model_provider)
+        initial_tensor_dict = self._get_initial_tensor_dict(model_provider, nn)
         try:
             response = self.federation.dir_client.set_new_experiment(
                 name=self.experiment_name,
@@ -65,9 +65,9 @@ class FLExperiment(FLExperiment):
         else:
             self.logger.info('Experiment was not accepted or failed.')
 
-    def _get_initial_tensor_dict(self, model_provider, nn=False):  # TODO pass the nn parameter from outside
+    def _get_initial_tensor_dict(self, model_provider, nn=True):
         """Extract initial weights from the model."""
-        self.task_runner_stub = self.plan.get_core_task_runner(model_provider=model_provider)
+        self.task_runner_stub = self.plan.get_core_task_runner(model_provider=model_provider, nn=nn)
         self.current_model_status = ModelStatus.INITIAL
 
         if nn:
@@ -96,8 +96,7 @@ class FLExperiment(FLExperiment):
         # Load the default plan
         # base_plan_path = WORKSPACE / 'workspace/plan/plans/default/base_plan_interactive_api.yaml'
         # plan = Plan.parse(base_plan_path, resolve=False)
-        plan = Plan.parse(Path("./plan/plan.yaml"),
-                          resolve=False)  # TODO Why do you want to overwrite the plan every time with its default?
+        plan = Plan.parse(Path("./plan/plan.yaml"), resolve=False)
         # Change plan name to default one
         plan.name = 'plan.yaml'
 
@@ -131,11 +130,9 @@ class FLExperiment(FLExperiment):
         #    plan.config['data_loader']['settings'][setting] = value
 
         # Tasks part
-        # @TODO This is the responsable for the overriding of the provided plan - should be integrated in a smarter way
-        # @TODO this piece of code gives problems, puts the entries in the config file in alphabetical order
+        # @TODO This code creates lots of problem when configuring a plan, mainly due to overriding
         # for name in task_keeper.task_registry:
         #    if task_keeper.task_contract[name]['optimizer'] is not None:
-        #        # TODO Why training is defined by the presence of the optimizer?
         #        # This is training task
         #        plan.config['tasks'][name] = {'function': name,
         #                                      'kwargs': task_keeper.task_settings[name]}
@@ -206,7 +203,6 @@ class TaskInterface(TaskInterface):
     Task returns a dictionary {metric name: metric value for this task}
     """
 
-    # @TODO: too much ad-hoc
     def register_fl_task(self, model, data_loader, device, optimizer=None, adaboost_coeff=None):
         """
         Register FL tasks.

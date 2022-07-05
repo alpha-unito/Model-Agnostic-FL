@@ -69,7 +69,7 @@ class Collaborator(Collaborator):
         self.compression_pipeline = compression_pipeline or NoCompressionPipeline()
         self.tensor_codec = TensorCodec(self.compression_pipeline)
         self.tensor_db = TensorDB(self.nn)
-        self.db_store_rounds = 1  # db_store_rounds
+        self.db_store_rounds = db_store_rounds
 
         self.task_runner = task_runner
         self.delta_updates = delta_updates
@@ -80,7 +80,7 @@ class Collaborator(Collaborator):
 
         self.logger = getLogger(__name__)
 
-        # @TODO: AdaBoost variables
+        # AdaBoost.F variables
         self.adaboost_coeff = np.ones(self.task_runner.get_train_data_size())
         self.model_buffer = None
         self.errors = []
@@ -151,10 +151,9 @@ class Collaborator(Collaborator):
         kwargs = self.task_config[task]['kwargs']
 
         # this would return a list of what tensors we require as TensorKeys
-        # @TODO: nn should be passed from above
         required_tensorkeys_relative = self.task_runner.get_required_tensorkeys_for_function(
             func_name,
-            nn=False,
+            nn=self.nn,
             **kwargs
         )
 
@@ -204,7 +203,7 @@ class Collaborator(Collaborator):
             func = getattr(self.task_runner, func_name)
             self.logger.info('Using TaskRunner subclassing API')
 
-        # @TODO: this is too much ad hoc
+        # TODO: this should be generalized
         if task == '1_train' or task == '2_weak_learners_validate':
             kwargs['adaboost_coeff'] = self.adaboost_coeff
 
@@ -214,12 +213,12 @@ class Collaborator(Collaborator):
             input_tensor_dict=input_tensor_dict,
             **kwargs)
 
-        # @TODO: this is too much ad hoc
+        # TODO: this should be generalized
         if task == '2_weak_learners_validate':
             self.model_buffer = input_tensor_dict['generic_model']
             self.errors = optional
         if task == '3_adaboost_update':
-            # @TODO assign a better name too this
+            # With this we are
             input_tensor_dict = input_tensor_dict['generic_model']
             alpha = input_tensor_dict[0]
             best_model = int(input_tensor_dict[1])
@@ -253,12 +252,10 @@ class Collaborator(Collaborator):
 
         # send the results for this tasks; delta and compression will occur in
         # this function
-
         self.send_task_results(global_output_tensor_dict, round_number, task, kwargs)
-        # TODO: This sleep must be eliminated with something smarter
-        # if task == '1_train' or task == '2_weak_learners_validate':
-        #    sleep(5)
 
+        # Synchronisation point for AdaBoost.F
+        # TODO: this should be applied only if the next task is GLOBAL
         while not self.synch(task, round_number, self.collaborator_name):
             sleep(0.5)
 
@@ -380,7 +377,7 @@ class Collaborator(Collaborator):
                 tensor_key,
                 require_lossless=True
             )
-        # @TODO: too much ad-hoc
+        # These tags are specific to AdaBoost.F
         elif 'weak_learner' in tags:
             nparray = self.get_tensor_from_aggregator(
                 tensor_key,

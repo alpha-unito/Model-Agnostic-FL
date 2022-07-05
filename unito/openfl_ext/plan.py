@@ -159,7 +159,6 @@ class Plan(Plan):
             # a part of the New API and it is a part of OpenFL kernel.
             # If Task Runner is placed elsewhere, somewhere in user workspace, than it is
             # a part of the old interface and we follow legacy initialization procedure.
-            # TODO This is not general
             if 'openfl.federated.task.task_runner' in self.config['task_runner']['template'] or \
                     'unito.openfl_ext.runner_generic.GenericTaskRunner' in self.config['task_runner']['template']:
                 # Interactive API
@@ -168,7 +167,8 @@ class Plan(Plan):
                 defaults[SETTINGS]['task_runner'] = self.get_core_task_runner(
                     data_loader=data_loader,
                     model_provider=model_provider,
-                    task_keeper=task_keeper)
+                    task_keeper=task_keeper,
+                    nn=defaults[SETTINGS]['nn'])
             else:
                 # TaskRunner subclassing API
                 data_loader = self.get_data_loader(collaborator_name)
@@ -220,7 +220,8 @@ class Plan(Plan):
 
     def get_core_task_runner(self, data_loader=None,
                              model_provider=None,
-                             task_keeper=None):
+                             task_keeper=None,
+                             nn=True):
         """Get task runner."""
         defaults = self.config.get(
             'task_runner',
@@ -228,6 +229,7 @@ class Plan(Plan):
                 TEMPLATE: 'openfl.federated.task.task_runner.CoreTaskRunner',
                 SETTINGS: {}
             })
+        defaults['nn'] = nn
         if self.runner_ is None:
             self.runner_ = Plan.build(**defaults)
 
