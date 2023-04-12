@@ -1,6 +1,6 @@
 # OpenFL-x - OpenFederatedLearning-extended
 
-OpenFederatedLearning-extended (OpenFL-x) is an **open-source extension** of [Intel® OpenFL](https://github.com/securefederatedai/openfl) supporting *federated bagging and boosting of any ML model*. The software is entirely Python-based and comes with an extensive set of examples, as described belolw, exploiting [SciKir-Learn](https://scikit-learn.org/stable/) models. It has been successfully tested on x86_64, ARM and RISC-V platforms.
+OpenFederatedLearning-extended (OpenFL-x) is an **open-source extension** of [Intel® OpenFL](https://github.com/securefederatedai/openfl) 1.4 supporting *federated bagging and boosting of any ML model*. The software is entirely Python-based and comes with an extensive set of examples, as described belolw, exploiting [SciKir-Learn](https://scikit-learn.org/stable/) models. It has been successfully tested on x86_64, ARM and RISC-V platforms.
 
 
 
@@ -44,12 +44,37 @@ Example results of the execution of these test and their variations are freely a
 
 
 
+## Aggregation algorithms
+
+OpenFL-x offers the possibility to experiment with basic **federated bagging** and the federated boosting method called **AdaBoost.F** developed by Polato et al. [1]. In this work other two federated version of AdaBoost are proposed, namely DistBoost.F and PreWeak.F, but AdaBoost.F has been selected as it provided the best experimental performances with respect to the other two approaches. 
+
+Concisely, AdaBoost.F creates *iteratively* an AdaBoost model selecting, during each federated round, the best-performing weak learner. It goes like this:
+1. The aggregator receives the dataset size N from each collaborator and sends
+them an initial version of the weak hypothesis.
+2. The aggregator receives the weak hypothesis hi from each collaborator and
+broadcasts the entire hypothesis space to every collaborator.
+3. The errors ε committed by the global weak hypothesis on the local data are
+calculated by each client and sent to the aggregator.
+4. The aggregator exploits the error information to select the best weak hy-
+pothesis c, adds it to the global strong hypothesis and sends the calculated
+AdaBoost coefficient α to the collaborators
+
+More details can be found in the original paper reported below.
+
+[1] *Polato, Mirko, Roberto Esposito, and Marco Aldinucci. "Boosting the federation: Cross-silo federated learning without gradient descent." 2022 International Joint Conference on Neural Networks (IJCNN). IEEE, 2022.*
+
+
+
 ## Performance optimisations
 
+Together with the new aggregation algorithm made available, OpenFL-x introduces also *many other litte optimisations* to the original OpenFL coda, all aiming to reduce the execution time and improve the computational performance of the code:
+1. we empirically optimised the buffer sizes used by gRPC to accommodate larger models and avoid resizing operations (∼1.5% execution time improvement over the base implementation);
+2. we employed the `Cloudpickle` serialisation framework over other options available (like `dill` and `pickle`) (∼2.6% execution time improvement over the base implementation);
+3. we modified the TensorDB to store only the essential information of the last two federation rounds (∼14.4% execution time improvement over the base implementation);
+4. we have lowered the few sleeps present in the code from 10 seconds to 0.01 seconds, which according to our experimentation on cluster system is the lowest value still yielding improvement (∼48.2% execution time improvement over the base implementation).
 
-
-## Aggregation algorithm
-
+Overall, through these simple small optimisations, we achieved an overall 5.46x speedup
+over the base software performance. This performance improvement makes the execution of OpenFL-x, toghether with the choice of lighweight weak learners, possible on a wide range of computing platforms, even low-power ones.
 
 
 
@@ -58,15 +83,10 @@ Example results of the execution of these test and their variations are freely a
 This work is currently under review at the [29th International European Conference on Parallel and Distributed Computing](https://2023.euro-par.org).
 The paper's citation and link will be provided as soon as they became available.
 
-A pre-print version of the paper is available on [arXiv](https://arxiv.org/abs/2303.04906).
+A pre-print version of this software's paper is available on [arXiv](https://arxiv.org/abs/2303.04906).
+
 
 
 ## Contacts
 
 This software is developed and maintained by [Gianluca Mittone](https://alpha.di.unito.it/gianluca-mittone/) (gianluca.mittone@unito.it).
-
-This software offers the possibility to experiment with basic Distributed Bagging and the Distributed Boosting method called AdaBoost.F developed by Polato et al.
-
-[Polato, Mirko, Roberto Esposito, and Marco Aldinucci. "Boosting the federation: Cross-silo federated learning without gradient descent." 2022 International Joint Conference on Neural Networks (IJCNN). IEEE, 2022.]
-
-
