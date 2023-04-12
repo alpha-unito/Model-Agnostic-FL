@@ -79,13 +79,13 @@ with open('README.md', encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='openfl',
-    version='1.4',
-    author='Intel Corporation',
-    description='Federated Learning for the Edge',
+    name='openfl-x',
+    version='1.4.0',
+    author='Gianluca Mittone',
+    description='Model-agnostic federated learning',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/intel/openfl',
+    url='https://github.com/alpha-unito/OpenFL-extended',
     packages=[
         'openfl',
         'openfl.component',
