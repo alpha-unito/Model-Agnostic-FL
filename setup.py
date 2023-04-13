@@ -80,7 +80,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='openfl-x',
-    version='1.4.0',
+    version='1.4.0.dev2',
     author='Gianluca Mittone',
     description='Model-agnostic federated learning',
     long_description=long_description,
@@ -137,7 +137,7 @@ setup(
         'cryptography>=3.4.6',
         'dill',
         'docker',
-        'dynaconf==3.1.7',
+        'dynaconf==3.1.5',
         'flatten_json',
         'grpcio~=1.48.2',
         'ipykernel',
@@ -151,13 +151,12 @@ setup(
         'tensorboard',
         'tensorboardX',
         'tqdm',
+        'wandb',
     ],
     setup_requires=['grpcio-tools~=1.48.2'],
     python_requires='>=3.6, <3.11',
     project_urls={
-        'Bug Tracker': 'https://github.com/intel/openfl/issues',
-        'Documentation': 'https://openfl.readthedocs.io/en/stable/',
-        'Source Code': 'https://github.com/intel/openfl',
+        'Source Code': 'https://github.com/alpha-unito/OpenFL-extended',
     },
     classifiers=[
         'Environment :: Console',

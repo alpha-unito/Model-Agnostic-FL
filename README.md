@@ -9,11 +9,9 @@ OpenFederatedLearning-extended (OpenFL-x) is an **open-source extension** of [In
 It is highly recommended to create a **virtual environment** prior to installing OpenFL-x (with both [venv](https://docs.python.org/3/library/venv.html) or [conda](https://docs.conda.io/en/latest/)) to avoid compatibility issues with existing Python software already installed on the system.
 Furthermore, since OpenFL-x is an extended version of OpenFL, it integrates all the features of the base framework plus the federated bagging and boosting functionalities: it is then suggested to **not install both software in the same virtual environment** since this can lead to issues in the working of both software.
 
-To install OpenFL-x, clone this repository and run `pip install`:
+You can get the lates version of OpenFL-x from `pypi`:
 ```
-git clone https://github.com/alpha-unito/OpenFL-extended.git
-cd OpenFL-extended
-pip install .
+pip install openfl-x
 ```
 If this procedure completes successfully, you now have access to all the base features of OpenFL, plus the distributed bagging and boosting functionalities. Enjoy!
 
