@@ -80,7 +80,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='openfl-x',
-    version='1.4.0.dev2',
+    version='1.4.0.dev4',
     author='Gianluca Mittone',
     description='Model-agnostic federated learning',
     long_description=long_description,
