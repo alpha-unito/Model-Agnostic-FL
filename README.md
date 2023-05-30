@@ -1,6 +1,6 @@
-# MAFL: Model-Agnostic Machine Learning
+# MAFL: Model-Agnostic Federated Learning
 
-MAFL: Model-Agnostic Machine Learning (formerly OpenFederatedLearning-extended (OpenFL-x)) is an **open-source extension** of [Intel® OpenFL](https://github.com/securefederatedai/openfl) 1.4 supporting *federated bagging and boosting of any ML model*. The software is entirely Python-based and comes with extensive examples, as described below, exploiting [SciKit-Learn](https://scikit-learn.org/stable/) models. It has been successfully tested on x86_64, ARM and RISC-V platforms.
+MAFL: Model-Agnostic Federated Learning (formerly OpenFederatedLearning-extended (OpenFL-x)) is an **open-source extension** of [Intel® OpenFL](https://github.com/securefederatedai/openfl) 1.4 supporting *federated bagging and boosting of any ML model*. The software is entirely Python-based and comes with extensive examples, as described below, exploiting [SciKit-Learn](https://scikit-learn.org/stable/) models. It has been successfully tested on x86_64, ARM and RISC-V platforms.
 
 
 
