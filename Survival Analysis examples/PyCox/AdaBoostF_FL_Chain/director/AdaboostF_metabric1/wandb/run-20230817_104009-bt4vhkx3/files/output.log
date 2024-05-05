@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "AdaBoostF_FL_Chain.py", line 147, in <module>
+    federation = Federation(client_id=client_id, director_node_fqdn=args.server, director_port='50054', tls=False) #Changed from to 50054
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\federation.py", line 58, in __init__
+    self.sample_shape, self.target_shape = self.dir_client.get_dataset_info()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\transport\grpc\director_client.py", line 234, in get_dataset_info
+    resp = self.stub.GetDatasetInfo(director_pb2.GetDatasetInfoRequest())
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\grpc\_interceptor.py", line 216, in __call__
+    response, ignored_call = self._with_call(request,
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\grpc\_interceptor.py", line 257, in _with_call
+    return call.result(), call
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\grpc\_channel.py", line 343, in result
+    raise self
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\grpc\_interceptor.py", line 241, in continuation
+    response, call = self._thunk(new_method).with_call(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\grpc\_channel.py", line 957, in with_call
+    return _end_unary_response_blocking(state, call, True, None)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\grpc\_channel.py", line 849, in _end_unary_response_blocking
+    raise _InactiveRpcError(state)
+grpc._channel._InactiveRpcError: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = "failed to connect to all addresses; last error: UNAVAILABLE: WSA Error"
+	debug_error_string = "UNKNOWN:Failed to pick subchannel {created_time:"2023-08-17T08:40:16.497143563+00:00", children:[UNKNOWN:failed to connect to all addresses; last error: UNAVAILABLE: WSA Error {created_time:"2023-08-17T08:40:16.497134186+00:00", grpc_status:14}]}"
+>

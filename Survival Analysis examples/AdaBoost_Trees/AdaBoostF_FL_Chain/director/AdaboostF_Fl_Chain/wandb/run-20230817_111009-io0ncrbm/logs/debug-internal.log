@@ -1,0 +1,200 @@
+2023-08-17 11:10:09,563 INFO    StreamThr :7060 [internal.py:wandb_internal():86] W&B internal server running at pid: 7060, started at: 2023-08-17 11:10:09.563196
+2023-08-17 11:10:09,579 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: status
+2023-08-17 11:10:09,579 INFO    WriterThread:7060 [datastore.py:open_for_write():85] open: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\run-io0ncrbm.wandb
+2023-08-17 11:10:09,596 DEBUG   SenderThread:7060 [sender.py:send():375] send: header
+2023-08-17 11:10:09,829 DEBUG   SenderThread:7060 [sender.py:send():375] send: run
+2023-08-17 11:10:10,796 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: check_version
+2023-08-17 11:10:10,796 INFO    SenderThread:7060 [dir_watcher.py:__init__():219] watching files in: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files
+2023-08-17 11:10:10,796 INFO    SenderThread:7060 [sender.py:_start_run_threads():1124] run started: io0ncrbm with start time 1692263409.579949
+2023-08-17 11:10:10,796 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: summary_record
+2023-08-17 11:10:10,796 INFO    SenderThread:7060 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2023-08-17 11:10:10,796 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: check_version
+2023-08-17 11:10:11,429 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: run_start
+2023-08-17 11:10:11,462 DEBUG   HandlerThread:7060 [system_info.py:__init__():31] System info init
+2023-08-17 11:10:11,462 DEBUG   HandlerThread:7060 [system_info.py:__init__():46] System info init done
+2023-08-17 11:10:11,462 INFO    HandlerThread:7060 [system_monitor.py:start():181] Starting system monitor
+2023-08-17 11:10:11,462 INFO    SystemMonitor:7060 [system_monitor.py:_start():145] Starting system asset monitoring threads
+2023-08-17 11:10:11,462 INFO    HandlerThread:7060 [system_monitor.py:probe():201] Collecting system info
+2023-08-17 11:10:11,479 INFO    SystemMonitor:7060 [interfaces.py:start():190] Started cpu monitoring
+2023-08-17 11:10:11,479 DEBUG   HandlerThread:7060 [system_info.py:probe():195] Probing system
+2023-08-17 11:10:11,479 INFO    SystemMonitor:7060 [interfaces.py:start():190] Started disk monitoring
+2023-08-17 11:10:11,479 INFO    SystemMonitor:7060 [interfaces.py:start():190] Started memory monitoring
+2023-08-17 11:10:11,496 INFO    SystemMonitor:7060 [interfaces.py:start():190] Started network monitoring
+2023-08-17 11:10:11,512 DEBUG   HandlerThread:7060 [system_info.py:_probe_git():180] Probing git
+2023-08-17 11:10:11,812 INFO    Thread-16 :7060 [dir_watcher.py:_on_file_created():278] file/dir created: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\wandb-summary.json
+2023-08-17 11:10:12,046 DEBUG   HandlerThread:7060 [system_info.py:_probe_git():188] Probing git done
+2023-08-17 11:10:12,046 DEBUG   HandlerThread:7060 [system_info.py:probe():240] Probing system done
+2023-08-17 11:10:12,046 DEBUG   HandlerThread:7060 [system_monitor.py:probe():210] {'os': 'Windows-10-10.0.19045-SP0', 'python': '3.8.16', 'heartbeatAt': '2023-08-17T09:10:11.479605', 'startedAt': '2023-08-17T09:10:09.529714', 'docker': None, 'cuda': None, 'args': (), 'state': 'running', 'program': 'AdaBoostF_FL_Chain.py', 'codePath': 'openfl-tutorials\\AdaBoost_Trees\\AdaBoostF_FL_Chain\\workspace\\AdaBoostF_FL_Chain.py', 'git': {'remote': 'git@github.com:oussamaHarrak/FederatedSurv.git', 'commit': '3fd5c3f04fc89d5dcb2c4a6926997a517d9ea1b2'}, 'email': 'harrak.oussama2002@gmail.com', 'root': 'C:/Users/DELL/Downloads/FederatedLearning/OpenFL-extended', 'host': 'DESKTOP-5AJHE86', 'username': 'DELL', 'executable': 'C:\\Users\\DELL\\anaconda3\\envs\\myenv\\python.exe', 'cpu_count': 2, 'cpu_count_logical': 4, 'cpu_freq': {'current': 1500.0, 'min': 0.0, 'max': 2301.0}, 'cpu_freq_per_core': [{'current': 1500.0, 'min': 0.0, 'max': 2301.0}], 'disk': {'total': 133.58313751220703, 'used': 127.98283386230469}, 'memory': {'total': 7.874275207519531}}
+2023-08-17 11:10:12,046 INFO    HandlerThread:7060 [system_monitor.py:probe():211] Finished collecting system info
+2023-08-17 11:10:12,046 INFO    HandlerThread:7060 [system_monitor.py:probe():214] Publishing system info
+2023-08-17 11:10:12,046 DEBUG   HandlerThread:7060 [system_info.py:_save_pip():51] Saving list of pip packages installed into the current environment
+2023-08-17 11:10:12,046 DEBUG   HandlerThread:7060 [system_info.py:_save_pip():67] Saving pip packages done
+2023-08-17 11:10:12,046 DEBUG   HandlerThread:7060 [system_info.py:_save_conda():74] Saving list of conda packages installed into the current environment
+2023-08-17 11:10:12,062 ERROR   HandlerThread:7060 [system_info.py:_save_conda():85] Error saving conda packages: [WinError 2] Le fichier spécifié est introuvable
+Traceback (most recent call last):
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\internal\system\system_info.py", line 81, in _save_conda
+    subprocess.call(
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\subprocess.py", line 340, in call
+    with Popen(*popenargs, **kwargs) as p:
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\subprocess.py", line 858, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\subprocess.py", line 1311, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+FileNotFoundError: [WinError 2] Le fichier spécifié est introuvable
+2023-08-17 11:10:12,062 DEBUG   HandlerThread:7060 [system_info.py:_save_conda():86] Saving conda packages done
+2023-08-17 11:10:12,062 INFO    HandlerThread:7060 [system_monitor.py:probe():216] Finished publishing system info
+2023-08-17 11:10:12,113 DEBUG   SenderThread:7060 [sender.py:send():375] send: files
+2023-08-17 11:10:12,113 INFO    SenderThread:7060 [sender.py:_save_file():1378] saving file wandb-metadata.json with policy now
+2023-08-17 11:10:12,148 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-17 11:10:12,148 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: stop_status
+2023-08-17 11:10:12,712 DEBUG   SenderThread:7060 [sender.py:send():375] send: telemetry
+2023-08-17 11:10:12,829 INFO    Thread-16 :7060 [dir_watcher.py:_on_file_created():278] file/dir created: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\requirements.txt
+2023-08-17 11:10:12,829 INFO    Thread-16 :7060 [dir_watcher.py:_on_file_created():278] file/dir created: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\wandb-metadata.json
+2023-08-17 11:10:12,829 INFO    Thread-16 :7060 [dir_watcher.py:_on_file_created():278] file/dir created: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\output.log
+2023-08-17 11:10:12,829 INFO    Thread-16 :7060 [dir_watcher.py:_on_file_created():278] file/dir created: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\conda-environment.yaml
+2023-08-17 11:10:13,062 INFO    wandb-upload_0:7060 [upload_job.py:push():137] Uploaded file C:\Users\DELL\AppData\Local\Temp\tmptgvz4opewandb\xa0o8r3c-wandb-metadata.json
+2023-08-17 11:10:14,745 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: status_report
+2023-08-17 11:10:14,862 INFO    Thread-16 :7060 [dir_watcher.py:_on_file_modified():295] file/dir modified: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\output.log
+2023-08-17 11:10:18,928 INFO    Thread-16 :7060 [dir_watcher.py:_on_file_modified():295] file/dir modified: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\output.log
+2023-08-17 11:10:20,611 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: status_report
+2023-08-17 11:10:20,961 INFO    Thread-16 :7060 [dir_watcher.py:_on_file_modified():295] file/dir modified: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\output.log
+2023-08-17 11:10:25,677 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: status_report
+2023-08-17 11:10:27,162 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-17 11:10:27,162 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: stop_status
+2023-08-17 11:10:31,593 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: status_report
+2023-08-17 11:10:36,659 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: status_report
+2023-08-17 11:10:41,772 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: status_report
+2023-08-17 11:10:42,176 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-17 11:10:42,176 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: stop_status
+2023-08-17 11:10:42,291 INFO    Thread-16 :7060 [dir_watcher.py:_on_file_modified():295] file/dir modified: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\config.yaml
+2023-08-17 11:10:47,590 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: status_report
+2023-08-17 11:10:49,273 DEBUG   SenderThread:7060 [sender.py:send():375] send: exit
+2023-08-17 11:10:49,273 INFO    SenderThread:7060 [sender.py:send_exit():598] handling exit code: 0
+2023-08-17 11:10:49,273 INFO    SenderThread:7060 [sender.py:send_exit():600] handling runtime: 37
+2023-08-17 11:10:49,290 INFO    SenderThread:7060 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2023-08-17 11:10:49,290 INFO    SenderThread:7060 [sender.py:send_exit():606] send defer
+2023-08-17 11:10:49,290 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:49,290 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 0
+2023-08-17 11:10:49,290 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:49,290 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 0
+2023-08-17 11:10:49,290 INFO    SenderThread:7060 [sender.py:transition_state():626] send defer: 1
+2023-08-17 11:10:49,290 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:49,290 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 1
+2023-08-17 11:10:49,290 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:49,290 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 1
+2023-08-17 11:10:49,290 INFO    SenderThread:7060 [sender.py:transition_state():626] send defer: 2
+2023-08-17 11:10:49,290 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:49,290 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 2
+2023-08-17 11:10:49,290 INFO    HandlerThread:7060 [system_monitor.py:finish():190] Stopping system monitor
+2023-08-17 11:10:49,290 DEBUG   SystemMonitor:7060 [system_monitor.py:_start():159] Starting system metrics aggregation loop
+2023-08-17 11:10:49,290 DEBUG   SystemMonitor:7060 [system_monitor.py:_start():166] Finished system metrics aggregation loop
+2023-08-17 11:10:49,290 INFO    HandlerThread:7060 [interfaces.py:finish():202] Joined cpu monitor
+2023-08-17 11:10:49,290 DEBUG   SystemMonitor:7060 [system_monitor.py:_start():170] Publishing last batch of metrics
+2023-08-17 11:10:49,290 INFO    HandlerThread:7060 [interfaces.py:finish():202] Joined disk monitor
+2023-08-17 11:10:49,307 INFO    HandlerThread:7060 [interfaces.py:finish():202] Joined memory monitor
+2023-08-17 11:10:49,307 INFO    HandlerThread:7060 [interfaces.py:finish():202] Joined network monitor
+2023-08-17 11:10:49,307 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:49,307 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 2
+2023-08-17 11:10:49,307 INFO    SenderThread:7060 [sender.py:transition_state():626] send defer: 3
+2023-08-17 11:10:49,307 DEBUG   SenderThread:7060 [sender.py:send():375] send: stats
+2023-08-17 11:10:49,307 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:49,307 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 3
+2023-08-17 11:10:49,307 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:49,307 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 3
+2023-08-17 11:10:49,307 INFO    SenderThread:7060 [sender.py:transition_state():626] send defer: 4
+2023-08-17 11:10:49,307 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:49,307 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 4
+2023-08-17 11:10:49,307 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:49,307 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 4
+2023-08-17 11:10:49,307 INFO    SenderThread:7060 [sender.py:transition_state():626] send defer: 5
+2023-08-17 11:10:49,307 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:49,307 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 5
+2023-08-17 11:10:49,307 DEBUG   SenderThread:7060 [sender.py:send():375] send: summary
+2023-08-17 11:10:49,307 INFO    SenderThread:7060 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2023-08-17 11:10:49,307 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:49,323 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 5
+2023-08-17 11:10:49,323 INFO    SenderThread:7060 [sender.py:transition_state():626] send defer: 6
+2023-08-17 11:10:49,324 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:49,324 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 6
+2023-08-17 11:10:49,324 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:49,324 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 6
+2023-08-17 11:10:49,324 INFO    SenderThread:7060 [sender.py:transition_state():626] send defer: 7
+2023-08-17 11:10:49,324 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: status_report
+2023-08-17 11:10:49,324 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:49,324 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 7
+2023-08-17 11:10:49,324 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:49,324 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 7
+2023-08-17 11:10:49,407 INFO    Thread-16 :7060 [dir_watcher.py:_on_file_modified():295] file/dir modified: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\wandb-summary.json
+2023-08-17 11:10:50,340 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: poll_exit
+2023-08-17 11:10:51,073 INFO    SenderThread:7060 [sender.py:transition_state():626] send defer: 8
+2023-08-17 11:10:51,073 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: poll_exit
+2023-08-17 11:10:51,073 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:51,073 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 8
+2023-08-17 11:10:51,073 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:51,073 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 8
+2023-08-17 11:10:51,122 INFO    SenderThread:7060 [sender.py:transition_state():626] send defer: 9
+2023-08-17 11:10:51,124 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:51,124 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 9
+2023-08-17 11:10:51,124 DEBUG   SenderThread:7060 [sender.py:send():375] send: artifact
+2023-08-17 11:10:51,356 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: poll_exit
+2023-08-17 11:10:51,440 INFO    Thread-16 :7060 [dir_watcher.py:_on_file_modified():295] file/dir modified: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\output.log
+2023-08-17 11:10:52,523 INFO    SenderThread:7060 [sender.py:send_artifact():1474] sent artifact job-git_github.com_oussamaHarrak_FederatedSurv.git_openfl-tutor..aBoost_Trees_AdaBoostF_FL_Chain_workspace_AdaBoostF_FL_Chain.py - {'id': 'QXJ0aWZhY3Q6NTQ0MDY2Mzk4', 'digest': 'e3aeb1a232c8070b10d403f939255139', 'state': 'COMMITTED', 'aliases': [{'artifactCollectionName': 'job-git_github.com_oussamaHarrak_FederatedSurv.git_openfl-tutor..aBoost_Trees_AdaBoostF_FL_Chain_workspace_AdaBoostF_FL_Chain.py', 'alias': 'latest'}, {'artifactCollectionName': 'job-git_github.com_oussamaHarrak_FederatedSurv.git_openfl-tutor..aBoost_Trees_AdaBoostF_FL_Chain_workspace_AdaBoostF_FL_Chain.py', 'alias': 'v0'}], 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjkxMDU1Mzc4', 'latestArtifact': {'id': 'QXJ0aWZhY3Q6NTQ0MDY2Mzk4', 'versionIndex': 0}}, 'version': 'v0'}
+2023-08-17 11:10:52,523 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:52,523 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 9
+2023-08-17 11:10:52,523 INFO    SenderThread:7060 [dir_watcher.py:finish():365] shutting down directory watcher
+2023-08-17 11:10:53,473 INFO    SenderThread:7060 [dir_watcher.py:finish():395] scan: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files
+2023-08-17 11:10:53,473 INFO    SenderThread:7060 [dir_watcher.py:finish():409] scan save: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\conda-environment.yaml conda-environment.yaml
+2023-08-17 11:10:53,473 INFO    SenderThread:7060 [dir_watcher.py:finish():409] scan save: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\config.yaml config.yaml
+2023-08-17 11:10:53,473 INFO    SenderThread:7060 [dir_watcher.py:finish():409] scan save: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\output.log output.log
+2023-08-17 11:10:53,473 INFO    SenderThread:7060 [dir_watcher.py:finish():409] scan save: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\requirements.txt requirements.txt
+2023-08-17 11:10:53,489 INFO    SenderThread:7060 [dir_watcher.py:finish():409] scan save: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\wandb-metadata.json wandb-metadata.json
+2023-08-17 11:10:53,489 INFO    SenderThread:7060 [dir_watcher.py:finish():409] scan save: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\wandb-summary.json wandb-summary.json
+2023-08-17 11:10:53,506 INFO    SenderThread:7060 [sender.py:transition_state():626] send defer: 10
+2023-08-17 11:10:53,506 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: poll_exit
+2023-08-17 11:10:53,506 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:53,506 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 10
+2023-08-17 11:10:53,506 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:53,506 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 10
+2023-08-17 11:10:53,506 INFO    SenderThread:7060 [file_pusher.py:finish():168] shutting down file pusher
+2023-08-17 11:10:54,173 INFO    wandb-upload_0:7060 [upload_job.py:push():137] Uploaded file C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\config.yaml
+2023-08-17 11:10:54,656 INFO    wandb-upload_1:7060 [upload_job.py:push():137] Uploaded file C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\output.log
+2023-08-17 11:10:54,756 INFO    wandb-upload_2:7060 [upload_job.py:push():137] Uploaded file C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\requirements.txt
+2023-08-17 11:10:54,806 INFO    wandb-upload_3:7060 [upload_job.py:push():137] Uploaded file C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\files\wandb-summary.json
+2023-08-17 11:10:55,021 INFO    Thread-15 :7060 [sender.py:transition_state():626] send defer: 11
+2023-08-17 11:10:55,023 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:55,023 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 11
+2023-08-17 11:10:55,023 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:55,023 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 11
+2023-08-17 11:10:55,023 INFO    SenderThread:7060 [file_pusher.py:join():173] waiting for file pusher
+2023-08-17 11:10:55,023 INFO    SenderThread:7060 [sender.py:transition_state():626] send defer: 12
+2023-08-17 11:10:55,023 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:55,023 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 12
+2023-08-17 11:10:55,023 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:55,023 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 12
+2023-08-17 11:10:55,289 INFO    SenderThread:7060 [sender.py:transition_state():626] send defer: 13
+2023-08-17 11:10:55,289 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:55,289 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 13
+2023-08-17 11:10:55,289 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:55,289 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 13
+2023-08-17 11:10:55,289 INFO    SenderThread:7060 [sender.py:transition_state():626] send defer: 14
+2023-08-17 11:10:55,289 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 11:10:55,289 DEBUG   SenderThread:7060 [sender.py:send():375] send: final
+2023-08-17 11:10:55,289 INFO    HandlerThread:7060 [handler.py:handle_request_defer():170] handle defer: 14
+2023-08-17 11:10:55,289 DEBUG   SenderThread:7060 [sender.py:send():375] send: footer
+2023-08-17 11:10:55,289 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: defer
+2023-08-17 11:10:55,289 INFO    SenderThread:7060 [sender.py:send_request_defer():622] handle sender defer: 14
+2023-08-17 11:10:55,289 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: poll_exit
+2023-08-17 11:10:55,289 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: server_info
+2023-08-17 11:10:55,289 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: get_summary
+2023-08-17 11:10:55,289 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: poll_exit
+2023-08-17 11:10:55,289 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: sampled_history
+2023-08-17 11:10:55,289 DEBUG   SenderThread:7060 [sender.py:send_request():402] send_request: server_info
+2023-08-17 11:10:55,539 INFO    MainThread:7060 [wandb_run.py:_footer_history_summary_info():3476] rendering history
+2023-08-17 11:10:55,539 INFO    MainThread:7060 [wandb_run.py:_footer_history_summary_info():3508] rendering summary
+2023-08-17 11:10:55,555 INFO    MainThread:7060 [wandb_run.py:_footer_sync_info():3434] logging synced files
+2023-08-17 11:10:55,556 DEBUG   HandlerThread:7060 [handler.py:handle_request():144] handle_request: shutdown
+2023-08-17 11:10:55,556 INFO    HandlerThread:7060 [handler.py:finish():845] shutting down handler
+2023-08-17 11:10:56,305 INFO    WriterThread:7060 [datastore.py:close():298] close: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\AdaBoost_Trees\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_111009-io0ncrbm\run-io0ncrbm.wandb
+2023-08-17 11:10:56,555 INFO    SenderThread:7060 [sender.py:finish():1550] shutting down sender
+2023-08-17 11:10:56,555 INFO    SenderThread:7060 [file_pusher.py:finish():168] shutting down file pusher
+2023-08-17 11:10:56,555 INFO    SenderThread:7060 [file_pusher.py:join():173] waiting for file pusher

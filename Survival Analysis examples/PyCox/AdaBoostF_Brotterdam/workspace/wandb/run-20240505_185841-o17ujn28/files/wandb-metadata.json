@@ -1,0 +1,36 @@
+{
+    "os": "Windows-10-10.0.19045-SP0",
+    "python": "3.8.16",
+    "heartbeatAt": "2024-05-05T16:58:42.717742",
+    "startedAt": "2024-05-05T16:58:41.769229",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "AdaBoostF_Brotterdam.py",
+    "codePath": "AdaBoostF_Brotterdam.py",
+    "host": "DESKTOP-5AJHE86",
+    "username": "DELL",
+    "executable": "C:\\Users\\DELL\\anaconda3\\envs\\myenv\\python.exe",
+    "cpu_count": 2,
+    "cpu_count_logical": 4,
+    "cpu_freq": {
+        "current": 1500.0,
+        "min": 0.0,
+        "max": 2301.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1500.0,
+            "min": 0.0,
+            "max": 2301.0
+        }
+    ],
+    "disk": {
+        "total": 133.58313751220703,
+        "used": 133.5599594116211
+    },
+    "memory": {
+        "total": 7.874275207519531
+    }
+}

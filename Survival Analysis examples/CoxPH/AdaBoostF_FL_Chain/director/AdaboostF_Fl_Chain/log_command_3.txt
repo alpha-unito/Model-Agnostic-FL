@@ -1,0 +1,544 @@
+2023-08-08 14:55:38.978251: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'cudart64_110.dll'; dlerror: cudart64_110.dll not found
+2023-08-08 14:55:38.992329: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+Traceback (most recent call last):
+  File "AdaBoostF_FL_Chain.py", line 114, in <module>
+    wandb.init(project="Federated_Learning_Fl_Chain",settings=wandb.Settings(_service_wait=600))
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\wandb_init.py", line 1164, in init
+    raise e
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\wandb_init.py", line 1141, in init
+    wi.setup(kwargs)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\wandb_init.py", line 172, in setup
+    self._wl = wandb_setup.setup(settings=setup_settings)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\wandb_setup.py", line 327, in setup
+    ret = _setup(settings=settings)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\wandb_setup.py", line 320, in _setup
+    wl = _WandbSetup(settings=settings)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\wandb_setup.py", line 303, in __init__
+    _WandbSetup._instance = _WandbSetup__WandbSetup(settings=settings, pid=pid)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\wandb_setup.py", line 114, in __init__
+    self._setup()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\wandb_setup.py", line 250, in _setup
+    self._setup_manager()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\wandb_setup.py", line 277, in _setup_manager
+    self._manager = wandb_manager._Manager(settings=self._settings)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\wandb_manager.py", line 145, in __init__
+    self._service.start()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\service\service.py", line 199, in start
+    self._launch_server()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\service\service.py", line 193, in _launch_server
+    _sentry.reraise(e)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\analytics\sentry.py", line 146, in reraise
+    raise exc.with_traceback(sys.exc_info()[2])
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\service\service.py", line 191, in _launch_server
+    self._wait_for_ports(fname, proc=internal_proc)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\service\service.py", line 141, in _wait_for_ports
+    raise ServiceStartTimeoutError(
+wandb.sdk.service.service.ServiceStartTimeoutError: Timed out waiting for wandb service to start after 30.0 seconds. Try increasing the timeout with the `_service_wait` setting.
+Traceback (most recent call last):
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\__main__.py", line 3, in <module>
+    cli.cli(prog_name="python -m wandb")
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\click\core.py", line 1137, in __call__
+    return self.main(*args, **kwargs)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\click\core.py", line 1062, in main
+    rv = self.invoke(ctx)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\click\core.py", line 1668, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\click\core.py", line 1404, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\click\core.py", line 763, in invoke
+    return __callback(*args, **kwargs)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\cli\cli.py", line 104, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\cli\cli.py", line 289, in service
+    server.serve()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\service\server.py", line 139, in serve
+    self._inform_used_ports(grpc_port=grpc_port, sock_port=sock_port)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\service\server.py", line 67, in _inform_used_ports
+    pf.write(self._port_fname)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\service\port_file.py", line 26, in write
+    f = tempfile.NamedTemporaryFile(prefix=bname, dir=dname, mode="w", delete=False)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\tempfile.py", line 540, in NamedTemporaryFile
+    (fd, name) = _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\tempfile.py", line 250, in _mkstemp_inner
+    fd = _os.open(file, flags, 0o600)
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\DELL\\AppData\\Local\\Temp\\tmp0n3roe39\\port-1796.txtlur4rw6g'
+forrtl: error (200): program aborting due to window-CLOSE event
+Image              PC                Routine            Line        Source             
+libifcoremd.dll    00007FFD3381DF54  Unknown               Unknown  Unknown
+KERNELBASE.dll     00007FFD9BDD2943  Unknown               Unknown  Unknown
+KERNEL32.DLL       00007FFD9D147614  Unknown               Unknown  Unknown
+ntdll.dll          00007FFD9E3E26B1  Unknown               Unknown  Unknown
+2023-08-11 16:13:50.196190: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'cudart64_110.dll'; dlerror: cudart64_110.dll not found
+2023-08-11 16:13:50.196465: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+wandb: Currently logged in as: harrak-oussama2002. Use `wandb login --relogin` to force relogin
+wandb: - Waiting for wandb.init()...wandb: \ Waiting for wandb.init()...wandb: wandb version 0.15.8 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.14.2
+wandb: Run data is saved locally in C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\boosting-examples\CoxPH\AdaBoostF_FL_Chain\workspace\wandb\run-20230811_161410-oi5ssvt8
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run clear-planet-80
+wandb:  View project at https://wandb.ai/harrak-oussama2002/Federated_Learning_Fl_Chain
+wandb:  View run at https://wandb.ai/harrak-oussama2002/Federated_Learning_Fl_Chain/runs/oi5ssvt8
+{'aggregator': {'settings': {'assigner': 'openfl.component.assigner.AdaBoostAssigner', 'best_state_path': 'save/best.pbuf', 'db_store_rounds': 1, 'init_state_path': 'save/init.pbuf', 'last_state_path': 'save/last.pbuf', 'nn': False, 'rounds_to_train': 5, 'write_logs': False}, 'template': 'openfl.component.aggregator.Aggregator'}, 'api_layer': {'required_plugin_components': {'serializer_plugin': 'openfl.plugins.interface_serializer.dill_serializer.DillSerializer'}, 'settings': {'aggregation_function_interface_file': 'aggregation_function_obj.pkl', 'dataloader_interface_file': 'loader_obj.pkl', 'model_interface_file': 'model_obj.pkl', 'task_assigner_file': 'task_assigner_obj.pkl', 'tasks_interface_file': 'tasks_obj.pkl'}}, 'assigner': {'settings': {'task_groups': [{'name': 'train_and_validate', 'percentage': 1.0, 'tasks': ['1_train', '2_weak_learners_validate', '3_adaboost_update', '4_adaboost_validate']}]}, 'template': 'openfl.component.assigner.AdaBoostAssigner'}, 'collaborator': {'settings': {'db_store_rounds': 2, 'delta_updates': False, 'device_assignment_policy': 'CPU_ONLY', 'nn': False, 'opt_treatment': 'CONTINUE_GLOBAL'}, 'template': 'openfl.component.collaborator.Collaborator'}, 'compression_pipeline': {'settings': {'nn': False}, 'template': 'openfl.pipelines.GenericPipeline'}, 'network': {'settings': {'agg_addr': 'localhost', 'agg_port': 'auto', 'cert_folder': 'cert', 'client_reconnect_interval': 5, 'disable_client_auth': False, 'hash_salt': 'auto', 'tls': False}, 'template': 'openfl.federation.Network'}, 'task_runner': {'required_plugin_components': {'framework_adapters': 'openfl.plugins.frameworks_adapters.generic_adapter.GenericAdapter'}, 'settings': {}, 'template': 'openfl.federated.task.runner_generic.GenericTaskRunner'}, 'tasks': {'1_train': {'aggregation_type': 'openfl.interface.aggregation_functions.AggregateRandomForest', 'function': 'train_adaboost', 'kwargs': {'apply': 'global', 'data': 'train', 'retrieve': 'weak_learner'}}, '2_weak_learners_validate': {'aggregation_type': 'openfl.interface.aggregation_functions.AggregateAdaboost', 'function': 'validate_weak_learners', 'kwargs': {'apply': 'global', 'data': 'train', 'retrieve': 'model'}, 'n_classes': 2}, '3_adaboost_update': {'aggregation_type': 'openfl.interface.aggregation_functions.WeightedAverage', 'function': 'adaboost_update', 'kwargs': {'apply': 'global', 'retrieve': 'adaboost_coeff'}}, '4_adaboost_validate': {'aggregation_type': 'openfl.interface.aggregation_functions.WeightedAverage', 'function': 'validate_adaboost', 'kwargs': {'apply': 'local', 'data': 'test', 'retrieve': 'adaboost'}}, 'settings': {}}}
+[16:14:13] INFO     Building [16:14:13] INFO     Building [16:14:13] INFO     Building [16:14:13] INFO     Building [16:14:13] INFO     Building [16:14:13] INFO     Building --- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 170, in emit
+    self.console.print(log_renderable)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 1720, in print
+    self._buffer.extend(new_segments)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 864, in __exit__
+    self._exit_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 822, in _exit_buffer
+    self._check_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 2027, in _check_buffer
+    legacy_windows_render(buffer, LegacyWindowsTerm(self.file))
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_windows_renderer.py", line 17, in legacy_windows_render
+    term.write_styled(text, style)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 442, in write_styled
+    self.write_text(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 403, in write_text
+    self.write(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\lib\redirect.py", line 640, in write
+    self._old_write(data)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f846' in position 0: character maps to <undefined>
+Call stack:
+  File "AdaBoostF_FL_Chain.py", line 126, in <module>
+    fl_experiment.start(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 234, in start
+    self.prepare_workspace_distribution(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 177, in prepare_workspace_distribution
+    self._serialize_interface_objects(model_provider, task_keeper, data_loader, task_assigner)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 434, in _serialize_interface_objects
+    serializer = self.plan.build(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\federated\plan\plan.py", line 171, in build
+    Plan.logger.info(f'Building [red]\U0001f846[/] Object [red]{class_name}[/] '
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1446, in info
+    self._log(INFO, msg, args, **kwargs)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1589, in _log
+    self.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1599, in handle
+    self.callHandlers(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1661, in callHandlers
+    hdlr.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 954, in handle
+    self.emit(record)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 172, in emit
+    self.handleError(record)
+Message: 'Building [red]\U0001f846[/] Object [red]DillSerializer[/] from [red]openfl.plugins.interface_serializer.dill_serializer[/] Module.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 170, in emit
+    self.console.print(log_renderable)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 1720, in print
+    self._buffer.extend(new_segments)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 864, in __exit__
+    self._exit_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 822, in _exit_buffer
+    self._check_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 2027, in _check_buffer
+    legacy_windows_render(buffer, LegacyWindowsTerm(self.file))
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_windows_renderer.py", line 17, in legacy_windows_render
+    term.write_styled(text, style)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 442, in write_styled
+    self.write_text(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 403, in write_text
+    self.write(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\lib\redirect.py", line 640, in write
+    self._old_write(data)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f846' in position 0: character maps to <undefined>
+Call stack:
+  File "AdaBoostF_FL_Chain.py", line 126, in <module>
+    fl_experiment.start(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 234, in start
+    self.prepare_workspace_distribution(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 177, in prepare_workspace_distribution
+    self._serialize_interface_objects(model_provider, task_keeper, data_loader, task_assigner)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 436, in _serialize_interface_objects
+    framework_adapter = Plan.build(model_provider.framework_plugin, {})
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\federated\plan\plan.py", line 171, in build
+    Plan.logger.info(f'Building [red]\U0001f846[/] Object [red]{class_name}[/] '
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1446, in info
+    self._log(INFO, msg, args, **kwargs)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1589, in _log
+    self.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1599, in handle
+    self.callHandlers(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1661, in callHandlers
+    hdlr.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 954, in handle
+    self.emit(record)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 172, in emit
+    self.handleError(record)
+Message: 'Building [red]\U0001f846[/] Object [red]GenericAdapter[/] from [red]openfl.plugins.frameworks_adapters.generic_adapter[/] Module.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 170, in emit
+    self.console.print(log_renderable)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 1720, in print
+    self._buffer.extend(new_segments)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 864, in __exit__
+    self._exit_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 822, in _exit_buffer
+    self._check_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 2027, in _check_buffer
+    legacy_windows_render(buffer, LegacyWindowsTerm(self.file))
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_windows_renderer.py", line 17, in legacy_windows_render
+    term.write_styled(text, style)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 442, in write_styled
+    self.write_text(text)
+[16:14:13] INFO     Building [16:14:13] INFO     Building   File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 403, in write_text
+    self.write(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\lib\redirect.py", line 640, in write
+    self._old_write(data)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f846' in position 0: character maps to <undefined>
+Call stack:
+  File "AdaBoostF_FL_Chain.py", line 126, in <module>
+    fl_experiment.start(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 240, in start
+    self.logger.info('Starting experiment!')
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1446, in info
+    self._log(INFO, msg, args, **kwargs)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1589, in _log
+    self.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1599, in handle
+    self.callHandlers(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1661, in callHandlers
+    hdlr.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 954, in handle
+    self.emit(record)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 172, in emit
+    self.handleError(record)
+Message: 'Starting experiment!'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 170, in emit
+    self.console.print(log_renderable)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 1720, in print
+    self._buffer.extend(new_segments)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 864, in __exit__
+    self._exit_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 822, in _exit_buffer
+    self._check_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 2027, in _check_buffer
+    legacy_windows_render(buffer, LegacyWindowsTerm(self.file))
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_windows_renderer.py", line 17, in legacy_windows_render
+    term.write_styled(text, style)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 442, in write_styled
+    self.write_text(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 403, in write_text
+    self.write(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\lib\redirect.py", line 640, in write
+    self._old_write(data)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f846' in position 0: character maps to <undefined>
+Call stack:
+  File "AdaBoostF_FL_Chain.py", line 126, in <module>
+    fl_experiment.start(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 241, in start
+    self.plan.resolve()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\federated\plan\plan.py", line 242, in resolve
+    self.federation_uuid = f'{self.name}_{self.hash[:8]}'
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\federated\plan\plan.py", line 235, in hash
+    Plan.logger.info(f'FL-Plan hash is [blue]{self.hash_.hexdigest()}[/]',
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1446, in info
+    self._log(INFO, msg, args, **kwargs)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1589, in _log
+    self.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1599, in handle
+    self.callHandlers(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1661, in callHandlers
+    hdlr.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 954, in handle
+    self.emit(record)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 172, in emit
+    self.handleError(record)
+Message: 'FL-Plan hash is [blue]65223df0eb65e77c4c8e2e6bc649569fb1fc0bef686376b53ed6800ce67ded124dea484333eadf6d1ff4eb97d474ccd2[/]'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 170, in emit
+    self.console.print(log_renderable)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 1720, in print
+    self._buffer.extend(new_segments)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 864, in __exit__
+    self._exit_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 822, in _exit_buffer
+    self._check_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 2027, in _check_buffer
+    legacy_windows_render(buffer, LegacyWindowsTerm(self.file))
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_windows_renderer.py", line 17, in legacy_windows_render
+    term.write_styled(text, style)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 442, in write_styled
+    self.write_text(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 403, in write_text
+    self.write(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\lib\redirect.py", line 640, in write
+    self._old_write(data)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f846' in position 0: character maps to <undefined>
+Call stack:
+  File "AdaBoostF_FL_Chain.py", line 126, in <module>
+    fl_experiment.start(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 241, in start
+    self.plan.resolve()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\federated\plan\plan.py", line 253, in resolve
+    self.hash[:8], 16
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\federated\plan\plan.py", line 235, in hash
+    Plan.logger.info(f'FL-Plan hash is [blue]{self.hash_.hexdigest()}[/]',
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1446, in info
+    self._log(INFO, msg, args, **kwargs)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1589, in _log
+    self.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1599, in handle
+    self.callHandlers(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1661, in callHandlers
+    hdlr.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 954, in handle
+    self.emit(record)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 172, in emit
+    self.handleError(record)
+Message: 'FL-Plan hash is [blue]65223df0eb65e77c4c8e2e6bc649569fb1fc0bef686376b53ed6800ce67ded124dea484333eadf6d1ff4eb97d474ccd2[/]'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 170, in emit
+    self.console.print(log_renderable)
+[16:14:13] INFO     Building [16:14:13] INFO     Building   File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 1720, in print
+    self._buffer.extend(new_segments)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 864, in __exit__
+    self._exit_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 822, in _exit_buffer
+    self._check_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 2027, in _check_buffer
+    legacy_windows_render(buffer, LegacyWindowsTerm(self.file))
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_windows_renderer.py", line 17, in legacy_windows_render
+    term.write_styled(text, style)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 442, in write_styled
+    self.write_text(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 403, in write_text
+    self.write(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\lib\redirect.py", line 640, in write
+    self._old_write(data)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f846' in position 0: character maps to <undefined>
+Call stack:
+  File "AdaBoostF_FL_Chain.py", line 126, in <module>
+    fl_experiment.start(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 242, in start
+    initial_tensor_dict = self._get_initial_tensor_dict(model_provider, self.nn)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 344, in _get_initial_tensor_dict
+    self.task_runner_stub = self.plan.get_core_task_runner(model_provider=model_provider, nn=nn)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\federated\plan\plan.py", line 429, in get_core_task_runner
+    self.runner_ = Plan.build(**defaults)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\federated\plan\plan.py", line 171, in build
+    Plan.logger.info(f'Building [red]\U0001f846[/] Object [red]{class_name}[/] '
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1446, in info
+    self._log(INFO, msg, args, **kwargs)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1589, in _log
+    self.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1599, in handle
+    self.callHandlers(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1661, in callHandlers
+    hdlr.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 954, in handle
+    self.emit(record)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 172, in emit
+    self.handleError(record)
+Message: 'Building [red]\U0001f846[/] Object [red]GenericTaskRunner[/] from [red]openfl.federated.task.runner_generic[/] Module.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 170, in emit
+    self.console.print(log_renderable)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 1720, in print
+    self._buffer.extend(new_segments)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 864, in __exit__
+    self._exit_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 822, in _exit_buffer
+    self._check_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 2027, in _check_buffer
+    legacy_windows_render(buffer, LegacyWindowsTerm(self.file))
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_windows_renderer.py", line 17, in legacy_windows_render
+    term.write_styled(text, style)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 442, in write_styled
+    self.write_text(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 403, in write_text
+    self.write(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\lib\redirect.py", line 640, in write
+    self._old_write(data)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f846' in position 0: character maps to <undefined>
+Call stack:
+  File "AdaBoostF_FL_Chain.py", line 126, in <module>
+    fl_experiment.start(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 242, in start
+    initial_tensor_dict = self._get_initial_tensor_dict(model_provider, self.nn)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 344, in _get_initial_tensor_dict
+    self.task_runner_stub = self.plan.get_core_task_runner(model_provider=model_provider, nn=nn)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\federated\plan\plan.py", line 436, in get_core_task_runner
+    framework_adapter = Plan.build(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\federated\plan\plan.py", line 171, in build
+    Plan.logger.info(f'Building [red]\U0001f846[/] Object [red]{class_name}[/] '
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1446, in info
+    self._log(INFO, msg, args, **kwargs)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1589, in _log
+    self.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1599, in handle
+    self.callHandlers(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1661, in callHandlers
+    hdlr.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 954, in handle
+    self.emit(record)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 172, in emit
+    self.handleError(record)
+Message: 'Building [red]\U0001f846[/] Object [red]GenericAdapter[/] from [red]openfl.plugins.frameworks_adapters.generic_adapter[/] Module.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 170, in emit
+    self.console.print(log_renderable)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 1720, in print
+    self._buffer.extend(new_segments)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 864, in __exit__
+    self._exit_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 822, in _exit_buffer
+    self._check_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 2027, in _check_buffer
+    legacy_windows_render(buffer, LegacyWindowsTerm(self.file))
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_windows_renderer.py", line 17, in legacy_windows_render
+    term.write_styled(text, style)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 442, in write_styled
+    self.write_text(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 403, in write_text
+    self.write(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\lib\redirect.py", line 640, in write
+    self._old_write(data)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f846' in position 0: character maps to <undefined>
+Call stack:
+  File "AdaBoostF_FL_Chain.py", line 126, in <module>
+    fl_experiment.start(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 244, in start
+    response = self.federation.dir_client.set_new_experiment(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\transport\grpc\director_client.py", line 202, in set_new_experiment
+    logger.info('SetNewExperiment')
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1446, in info
+    self._log(INFO, msg, args, **kwargs)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1589, in _log
+    self.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1599, in handle
+    self.callHandlers(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1661, in callHandlers
+    hdlr.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 954, in handle
+    self.emit(record)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 172, in emit
+    self.handleError(record)
+Message: 'SetNewExperiment'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 170, in emit
+    self.console.print(log_renderable)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 1720, in print
+    self._buffer.extend(new_segments)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 864, in __exit__
+    self._exit_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 822, in _exit_buffer
+    self._check_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 2027, in _check_buffer
+    legacy_windows_render(buffer, LegacyWindowsTerm(self.file))
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_windows_renderer.py", line 17, in legacy_windows_render
+    term.write_styled(text, style)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 442, in write_styled
+    self.write_text(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 403, in write_text
+    self.write(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\lib\redirect.py", line 640, in write
+    self._old_write(data)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f846' in position 0: character maps to <undefined>
+Call stack:
+  File "AdaBoostF_FL_Chain.py", line 126, in <module>
+    fl_experiment.start(
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 255, in start
+    self.logger.info('Experiment was accepted and launched.')
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1446, in info
+    self._log(INFO, msg, args, **kwargs)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1589, in _log
+    self.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1599, in handle
+    self.callHandlers(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1661, in callHandlers
+    hdlr.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 954, in handle
+    self.emit(record)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 172, in emit
+    self.handleError(record)
+Message: 'Experiment was accepted and launched.'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 170, in emit
+    self.console.print(log_renderable)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 1720, in print
+    self._buffer.extend(new_segments)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 864, in __exit__
+    self._exit_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 822, in _exit_buffer
+    self._check_buffer()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\console.py", line 2027, in _check_buffer
+    legacy_windows_render(buffer, LegacyWindowsTerm(self.file))
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_windows_renderer.py", line 17, in legacy_windows_render
+    term.write_styled(text, style)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 442, in write_styled
+    self.write_text(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\_win32_console.py", line 403, in write_text
+    self.write(text)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\lib\redirect.py", line 640, in write
+    self._old_write(data)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f846' in position 0: character maps to <undefined>
+Call stack:
+  File "AdaBoostF_FL_Chain.py", line 135, in <module>
+    fl_experiment.remove_experiment_data()
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\openfl\interface\interactive_api\experiment.py", line 170, in remove_experiment_data
+    self.logger.info(log_message)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1446, in info
+    self._log(INFO, msg, args, **kwargs)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1589, in _log
+    self.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1599, in handle
+    self.callHandlers(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 1661, in callHandlers
+    hdlr.handle(record)
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\logging\__init__.py", line 954, in handle
+    self.emit(record)
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\rich\logging.py", line 172, in emit
+    self.handleError(record)
+Message: 'Removing experiment data succeed.'
+Arguments: ()
+wandb: Waiting for W&B process to finish... (success).
+wandb: - 0.001 MB of 0.001 MB uploaded (0.000 MB deduped)wandb: \ 0.001 MB of 0.001 MB uploaded (0.000 MB deduped)wandb: | 0.001 MB of 0.001 MB uploaded (0.000 MB deduped)wandb: / 0.001 MB of 0.001 MB uploaded (0.000 MB deduped)wandb: - 0.001 MB of 0.001 MB uploaded (0.000 MB deduped)wandb:  View run clear-planet-80 at: https://wandb.ai/harrak-oussama2002/Federated_Learning_Fl_Chain/runs/oi5ssvt8
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: .\wandb\run-20230811_161410-oi5ssvt8\logs
