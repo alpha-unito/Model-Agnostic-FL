@@ -1,4 +1,0 @@
-recursive-include openfl-workspace *
-recursive-include openfl-docker *
-recursive-include openfl-gramine *
-recursive-include openfl-tutorials *

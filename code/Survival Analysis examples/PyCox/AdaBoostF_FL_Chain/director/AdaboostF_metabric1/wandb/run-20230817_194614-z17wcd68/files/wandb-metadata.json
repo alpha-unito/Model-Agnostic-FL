@@ -1,0 +1,42 @@
+{
+    "os": "Windows-10-10.0.19045-SP0",
+    "python": "3.8.16",
+    "heartbeatAt": "2023-08-17T17:46:15.593596",
+    "startedAt": "2023-08-17T17:46:14.726880",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "AdaBoostF_FL_Chain.py",
+    "codePath": "openfl-tutorials\\PyCox\\AdaBoostF_FL_Chain\\workspace\\AdaBoostF_FL_Chain.py",
+    "git": {
+        "remote": "git@github.com:oussamaHarrak/FederatedSurv.git",
+        "commit": "3fd5c3f04fc89d5dcb2c4a6926997a517d9ea1b2"
+    },
+    "email": "harrak.oussama2002@gmail.com",
+    "root": "C:/Users/DELL/Downloads/FederatedLearning/OpenFL-extended",
+    "host": "DESKTOP-5AJHE86",
+    "username": "DELL",
+    "executable": "C:\\Users\\DELL\\anaconda3\\envs\\myenv\\python.exe",
+    "cpu_count": 2,
+    "cpu_count_logical": 4,
+    "cpu_freq": {
+        "current": 2301.0,
+        "min": 0.0,
+        "max": 2301.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2301.0,
+            "min": 0.0,
+            "max": 2301.0
+        }
+    ],
+    "disk": {
+        "total": 133.58313751220703,
+        "used": 128.35947799682617
+    },
+    "memory": {
+        "total": 7.874275207519531
+    }
+}

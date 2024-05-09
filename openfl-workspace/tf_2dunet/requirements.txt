@@ -1,2 +1,0 @@
-nibabel
-tensorflow==2.8.3

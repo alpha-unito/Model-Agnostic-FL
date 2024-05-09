@@ -1,0 +1,106 @@
+2023-08-17 10:42:18,562 INFO    StreamThr :16572 [internal.py:wandb_internal():86] W&B internal server running at pid: 16572, started at: 2023-08-17 10:42:18.562651
+2023-08-17 10:42:18,579 DEBUG   HandlerThread:16572 [handler.py:handle_request():144] handle_request: status
+2023-08-17 10:42:18,579 INFO    WriterThread:16572 [datastore.py:open_for_write():85] open: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\PyCox\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_104218-gpwagu8s\run-gpwagu8s.wandb
+2023-08-17 10:42:18,595 DEBUG   SenderThread:16572 [sender.py:send():375] send: header
+2023-08-17 10:42:18,931 DEBUG   SenderThread:16572 [sender.py:send():375] send: run
+2023-08-17 10:42:19,862 DEBUG   HandlerThread:16572 [handler.py:handle_request():144] handle_request: check_version
+2023-08-17 10:42:19,879 INFO    SenderThread:16572 [dir_watcher.py:__init__():219] watching files in: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\PyCox\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_104218-gpwagu8s\files
+2023-08-17 10:42:19,879 INFO    SenderThread:16572 [sender.py:_start_run_threads():1124] run started: gpwagu8s with start time 1692261738.579463
+2023-08-17 10:42:19,879 DEBUG   SenderThread:16572 [sender.py:send_request():402] send_request: summary_record
+2023-08-17 10:42:19,879 INFO    SenderThread:16572 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2023-08-17 10:42:19,879 DEBUG   SenderThread:16572 [sender.py:send_request():402] send_request: check_version
+2023-08-17 10:42:20,128 DEBUG   HandlerThread:16572 [handler.py:handle_request():144] handle_request: run_start
+2023-08-17 10:42:20,179 DEBUG   HandlerThread:16572 [system_info.py:__init__():31] System info init
+2023-08-17 10:42:20,179 DEBUG   HandlerThread:16572 [system_info.py:__init__():46] System info init done
+2023-08-17 10:42:20,179 INFO    HandlerThread:16572 [system_monitor.py:start():181] Starting system monitor
+2023-08-17 10:42:20,179 INFO    SystemMonitor:16572 [system_monitor.py:_start():145] Starting system asset monitoring threads
+2023-08-17 10:42:20,179 INFO    HandlerThread:16572 [system_monitor.py:probe():201] Collecting system info
+2023-08-17 10:42:20,195 INFO    SystemMonitor:16572 [interfaces.py:start():190] Started cpu monitoring
+2023-08-17 10:42:20,195 DEBUG   HandlerThread:16572 [system_info.py:probe():195] Probing system
+2023-08-17 10:42:20,195 INFO    SystemMonitor:16572 [interfaces.py:start():190] Started disk monitoring
+2023-08-17 10:42:20,195 INFO    SystemMonitor:16572 [interfaces.py:start():190] Started memory monitoring
+2023-08-17 10:42:20,212 INFO    SystemMonitor:16572 [interfaces.py:start():190] Started network monitoring
+2023-08-17 10:42:20,245 DEBUG   HandlerThread:16572 [system_info.py:_probe_git():180] Probing git
+2023-08-17 10:42:20,879 DEBUG   HandlerThread:16572 [system_info.py:_probe_git():188] Probing git done
+2023-08-17 10:42:20,879 DEBUG   HandlerThread:16572 [system_info.py:probe():240] Probing system done
+2023-08-17 10:42:20,879 DEBUG   HandlerThread:16572 [system_monitor.py:probe():210] {'os': 'Windows-10-10.0.19045-SP0', 'python': '3.8.16', 'heartbeatAt': '2023-08-17T08:42:20.195711', 'startedAt': '2023-08-17T08:42:18.512606', 'docker': None, 'cuda': None, 'args': (), 'state': 'running', 'program': 'AdaBoostF_FL_Chain.py', 'codePath': 'openfl-tutorials\\PyCox\\AdaBoostF_FL_Chain\\workspace\\AdaBoostF_FL_Chain.py', 'git': {'remote': 'git@github.com:oussamaHarrak/FederatedSurv.git', 'commit': '3fd5c3f04fc89d5dcb2c4a6926997a517d9ea1b2'}, 'email': 'harrak.oussama2002@gmail.com', 'root': 'C:/Users/DELL/Downloads/FederatedLearning/OpenFL-extended', 'host': 'DESKTOP-5AJHE86', 'username': 'DELL', 'executable': 'C:\\Users\\DELL\\anaconda3\\envs\\myenv\\python.exe', 'cpu_count': 2, 'cpu_count_logical': 4, 'cpu_freq': {'current': 1500.0, 'min': 0.0, 'max': 2301.0}, 'cpu_freq_per_core': [{'current': 1500.0, 'min': 0.0, 'max': 2301.0}], 'disk': {'total': 133.58313751220703, 'used': 127.96492004394531}, 'memory': {'total': 7.874275207519531}}
+2023-08-17 10:42:20,879 INFO    HandlerThread:16572 [system_monitor.py:probe():211] Finished collecting system info
+2023-08-17 10:42:20,879 INFO    HandlerThread:16572 [system_monitor.py:probe():214] Publishing system info
+2023-08-17 10:42:20,879 DEBUG   HandlerThread:16572 [system_info.py:_save_pip():51] Saving list of pip packages installed into the current environment
+2023-08-17 10:42:20,895 DEBUG   HandlerThread:16572 [system_info.py:_save_pip():67] Saving pip packages done
+2023-08-17 10:42:20,895 DEBUG   HandlerThread:16572 [system_info.py:_save_conda():74] Saving list of conda packages installed into the current environment
+2023-08-17 10:42:20,895 INFO    Thread-16 :16572 [dir_watcher.py:_on_file_created():278] file/dir created: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\PyCox\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_104218-gpwagu8s\files\requirements.txt
+2023-08-17 10:42:20,895 INFO    Thread-16 :16572 [dir_watcher.py:_on_file_created():278] file/dir created: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\PyCox\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_104218-gpwagu8s\files\wandb-summary.json
+2023-08-17 10:42:20,913 ERROR   HandlerThread:16572 [system_info.py:_save_conda():85] Error saving conda packages: [WinError 2] Le fichier spécifié est introuvable
+Traceback (most recent call last):
+  File "C:\Users\DELL\AppData\Roaming\Python\Python38\site-packages\wandb\sdk\internal\system\system_info.py", line 81, in _save_conda
+    subprocess.call(
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\subprocess.py", line 340, in call
+    with Popen(*popenargs, **kwargs) as p:
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\subprocess.py", line 858, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "C:\Users\DELL\anaconda3\envs\myenv\lib\subprocess.py", line 1311, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+FileNotFoundError: [WinError 2] Le fichier spécifié est introuvable
+2023-08-17 10:42:20,913 DEBUG   HandlerThread:16572 [system_info.py:_save_conda():86] Saving conda packages done
+2023-08-17 10:42:20,928 INFO    HandlerThread:16572 [system_monitor.py:probe():216] Finished publishing system info
+2023-08-17 10:42:20,979 DEBUG   SenderThread:16572 [sender.py:send():375] send: files
+2023-08-17 10:42:20,979 INFO    SenderThread:16572 [sender.py:_save_file():1378] saving file wandb-metadata.json with policy now
+2023-08-17 10:42:21,012 DEBUG   HandlerThread:16572 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-17 10:42:21,012 DEBUG   SenderThread:16572 [sender.py:send_request():402] send_request: stop_status
+2023-08-17 10:42:21,495 DEBUG   SenderThread:16572 [sender.py:send():375] send: telemetry
+2023-08-17 10:42:21,895 INFO    wandb-upload_0:16572 [upload_job.py:push():137] Uploaded file C:\Users\DELL\AppData\Local\Temp\tmpxtvok86wwandb\6r3stssn-wandb-metadata.json
+2023-08-17 10:42:21,912 INFO    Thread-16 :16572 [dir_watcher.py:_on_file_created():278] file/dir created: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\PyCox\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_104218-gpwagu8s\files\conda-environment.yaml
+2023-08-17 10:42:21,912 INFO    Thread-16 :16572 [dir_watcher.py:_on_file_created():278] file/dir created: C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\PyCox\AdaBoostF_FL_Chain\workspace\wandb\run-20230817_104218-gpwagu8s\files\wandb-metadata.json
+2023-08-17 10:42:24,536 DEBUG   HandlerThread:16572 [handler.py:handle_request():144] handle_request: status_report
+2023-08-17 10:42:25,582 DEBUG   SenderThread:16572 [sender.py:send():375] send: exit
+2023-08-17 10:42:25,582 INFO    SenderThread:16572 [sender.py:send_exit():598] handling exit code: 1
+2023-08-17 10:42:25,582 INFO    SenderThread:16572 [sender.py:send_exit():600] handling runtime: 5
+2023-08-17 10:42:25,582 INFO    SenderThread:16572 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2023-08-17 10:42:25,596 INFO    SenderThread:16572 [sender.py:send_exit():606] send defer
+2023-08-17 10:42:25,596 DEBUG   HandlerThread:16572 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 10:42:25,596 INFO    HandlerThread:16572 [handler.py:handle_request_defer():170] handle defer: 0
+2023-08-17 10:42:25,596 DEBUG   SenderThread:16572 [sender.py:send_request():402] send_request: defer
+2023-08-17 10:42:25,596 INFO    SenderThread:16572 [sender.py:send_request_defer():622] handle sender defer: 0
+2023-08-17 10:42:25,596 INFO    SenderThread:16572 [sender.py:transition_state():626] send defer: 1
+2023-08-17 10:42:25,596 DEBUG   HandlerThread:16572 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 10:42:25,596 INFO    HandlerThread:16572 [handler.py:handle_request_defer():170] handle defer: 1
+2023-08-17 10:42:25,596 DEBUG   SenderThread:16572 [sender.py:send_request():402] send_request: defer
+2023-08-17 10:42:25,596 INFO    SenderThread:16572 [sender.py:send_request_defer():622] handle sender defer: 1
+2023-08-17 10:42:25,596 INFO    SenderThread:16572 [sender.py:transition_state():626] send defer: 2
+2023-08-17 10:42:25,596 DEBUG   HandlerThread:16572 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 10:42:25,596 INFO    HandlerThread:16572 [handler.py:handle_request_defer():170] handle defer: 2
+2023-08-17 10:42:25,596 INFO    HandlerThread:16572 [system_monitor.py:finish():190] Stopping system monitor
+2023-08-17 10:42:25,611 DEBUG   SystemMonitor:16572 [system_monitor.py:_start():159] Starting system metrics aggregation loop
+2023-08-17 10:42:25,612 INFO    HandlerThread:16572 [interfaces.py:finish():202] Joined cpu monitor
+2023-08-17 10:42:25,612 DEBUG   SystemMonitor:16572 [system_monitor.py:_start():166] Finished system metrics aggregation loop
+2023-08-17 10:42:25,612 INFO    HandlerThread:16572 [interfaces.py:finish():202] Joined disk monitor
+2023-08-17 10:42:25,612 DEBUG   SystemMonitor:16572 [system_monitor.py:_start():170] Publishing last batch of metrics
+2023-08-17 10:42:25,616 INFO    HandlerThread:16572 [interfaces.py:finish():202] Joined memory monitor
+2023-08-17 10:42:25,616 INFO    HandlerThread:16572 [interfaces.py:finish():202] Joined network monitor
+2023-08-17 10:42:25,616 DEBUG   SenderThread:16572 [sender.py:send_request():402] send_request: defer
+2023-08-17 10:42:25,616 INFO    SenderThread:16572 [sender.py:send_request_defer():622] handle sender defer: 2
+2023-08-17 10:42:25,616 INFO    SenderThread:16572 [sender.py:transition_state():626] send defer: 3
+2023-08-17 10:42:25,616 DEBUG   SenderThread:16572 [sender.py:send():375] send: stats
+2023-08-17 10:42:25,624 DEBUG   HandlerThread:16572 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 10:42:25,624 INFO    HandlerThread:16572 [handler.py:handle_request_defer():170] handle defer: 3
+2023-08-17 10:42:25,624 DEBUG   SenderThread:16572 [sender.py:send_request():402] send_request: defer
+2023-08-17 10:42:25,624 INFO    SenderThread:16572 [sender.py:send_request_defer():622] handle sender defer: 3
+2023-08-17 10:42:25,624 INFO    SenderThread:16572 [sender.py:transition_state():626] send defer: 4
+2023-08-17 10:42:25,624 DEBUG   HandlerThread:16572 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 10:42:25,624 INFO    HandlerThread:16572 [handler.py:handle_request_defer():170] handle defer: 4
+2023-08-17 10:42:25,624 DEBUG   SenderThread:16572 [sender.py:send_request():402] send_request: defer
+2023-08-17 10:42:25,632 INFO    SenderThread:16572 [sender.py:send_request_defer():622] handle sender defer: 4
+2023-08-17 10:42:25,632 INFO    SenderThread:16572 [sender.py:transition_state():626] send defer: 5
+2023-08-17 10:42:25,632 DEBUG   HandlerThread:16572 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 10:42:25,632 INFO    HandlerThread:16572 [handler.py:handle_request_defer():170] handle defer: 5
+2023-08-17 10:42:25,632 DEBUG   SenderThread:16572 [sender.py:send():375] send: summary
+2023-08-17 10:42:25,632 INFO    SenderThread:16572 [sender.py:_save_file():1378] saving file wandb-summary.json with policy end
+2023-08-17 10:42:25,632 DEBUG   SenderThread:16572 [sender.py:send_request():402] send_request: defer
+2023-08-17 10:42:25,632 INFO    SenderThread:16572 [sender.py:send_request_defer():622] handle sender defer: 5
+2023-08-17 10:42:25,632 INFO    SenderThread:16572 [sender.py:transition_state():626] send defer: 6
+2023-08-17 10:42:25,640 DEBUG   HandlerThread:16572 [handler.py:handle_request():144] handle_request: defer
+2023-08-17 10:42:25,640 INFO    HandlerThread:16572 [handler.py:handle_request_defer():170] handle defer: 6
+2023-08-17 10:42:25,640 DEBUG   SenderThread:16572 [sender.py:send_request():402] send_request: defer
+2023-08-17 10:42:25,640 INFO    SenderThread:16572 [sender.py:send_request_defer():622] handle sender defer: 6
+2023-08-17 10:42:25,661 DEBUG   HandlerThread:16572 [handler.py:handle_request():144] handle_request: status_report

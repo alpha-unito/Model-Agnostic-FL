@@ -1,0 +1,27 @@
+2023-08-16 23:50:43,562 INFO    MainThread:15904 [wandb_setup.py:_flush():76] Configure stats pid to 15904
+2023-08-16 23:50:43,563 INFO    MainThread:15904 [wandb_setup.py:_flush():76] Loading settings from C:\Users\DELL\.config\wandb\settings
+2023-08-16 23:50:43,563 INFO    MainThread:15904 [wandb_setup.py:_flush():76] Loading settings from C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\PyCox\AdaBoostF_Support_Feature\workspace\wandb\settings
+2023-08-16 23:50:43,563 INFO    MainThread:15904 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2023-08-16 23:50:43,564 INFO    MainThread:15904 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2023-08-16 23:50:43,564 INFO    MainThread:15904 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'openfl-tutorials\\PyCox\\AdaBoostF_Support_Feature\\workspace\\AdaBoostF_Support_Feature.py', 'program': 'AdaBoostF_Support_Feature.py'}
+2023-08-16 23:50:43,565 INFO    MainThread:15904 [wandb_init.py:_log_setup():507] Logging user logs to C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\PyCox\AdaBoostF_Support_Feature\workspace\wandb\run-20230816_235043-gw6h5wxw\logs\debug.log
+2023-08-16 23:50:43,566 INFO    MainThread:15904 [wandb_init.py:_log_setup():508] Logging internal logs to C:\Users\DELL\Downloads\FederatedLearning\OpenFL-extended\openfl-tutorials\PyCox\AdaBoostF_Support_Feature\workspace\wandb\run-20230816_235043-gw6h5wxw\logs\debug-internal.log
+2023-08-16 23:50:43,566 INFO    MainThread:15904 [wandb_init.py:init():547] calling init triggers
+2023-08-16 23:50:43,567 INFO    MainThread:15904 [wandb_init.py:init():554] wandb.init called with sweep_config: {}
+config: {}
+2023-08-16 23:50:43,567 INFO    MainThread:15904 [wandb_init.py:init():595] starting backend
+2023-08-16 23:50:43,567 INFO    MainThread:15904 [wandb_init.py:init():599] setting up manager
+2023-08-16 23:50:43,595 INFO    MainThread:15904 [backend.py:_multiprocessing_setup():106] multiprocessing start_methods=spawn, using: spawn
+2023-08-16 23:50:43,623 INFO    MainThread:15904 [wandb_init.py:init():605] backend started and connected
+2023-08-16 23:50:43,627 INFO    MainThread:15904 [wandb_init.py:init():695] updated telemetry
+2023-08-16 23:50:44,457 INFO    MainThread:15904 [wandb_init.py:init():732] communicating run to backend with 60.0 second timeout
+2023-08-16 23:50:45,842 INFO    MainThread:15904 [wandb_run.py:_on_init():2176] communicating current version
+2023-08-16 23:50:46,062 INFO    MainThread:15904 [wandb_run.py:_on_init():2185] got version response upgrade_message: "wandb version 0.15.8 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2023-08-16 23:50:46,062 INFO    MainThread:15904 [wandb_init.py:init():782] starting run threads in backend
+2023-08-16 23:50:47,138 INFO    MainThread:15904 [wandb_run.py:_console_start():2157] atexit reg
+2023-08-16 23:50:47,139 INFO    MainThread:15904 [wandb_run.py:_redirect():2012] redirect: SettingsConsole.WRAP_RAW
+2023-08-16 23:50:47,140 INFO    MainThread:15904 [wandb_run.py:_redirect():2077] Wrapping output streams.
+2023-08-16 23:50:47,140 INFO    MainThread:15904 [wandb_run.py:_redirect():2102] Redirects installed.
+2023-08-16 23:50:47,143 INFO    MainThread:15904 [wandb_init.py:init():824] run started, returning control to user process
+2023-08-17 00:21:58,307 WARNING MsgRouterThr:15904 [router.py:message_loop():77] message_loop has been closed
