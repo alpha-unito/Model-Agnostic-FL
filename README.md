@@ -83,8 +83,7 @@ over the base software performance. This performance improvement makes the execu
 
 ## Publication
 
-This work is currently under review at the [29th International European Conference on Parallel and Distributed Computing](https://2023.euro-par.org).
-The paper's citation and link will be provided as soon as they become available.
+Gianluca Mittone, Walter Riviera, Iacopo Colonnelli, Robert Birke, and Marco Aldinucci. “Model-Agnostic Federated Learning.” In: Euro-Par 2023: Parallel Processing - 29th International Conference on Parallel and Distributed Computing, Limassol, Cyprus, August 28 - September 1, 2023, Proceedings. Ed. by José Cano, Mar- ios D. Dikaiakos, George A. Papadopoulos, Miquel Pericàs, and Rizos Sakellariou. Vol. 14100. Lecture Notes in Computer Science. Limassol, Cyprus: Springer, Sept. 2023, pp. 383–396. doi: 10.1007/978-3-031-39698-4\_26. url: https: //doi.org/10.1007/978-3-031-39698-4%5C_26
 
 A pre-print version of this software's paper is available on [arXiv](https://arxiv.org/abs/2303.04906).
 
