@@ -90,7 +90,7 @@ class Float32NumpyArrayToBytes(Transformer):
             flat_array = np.frombuffer(data, dtype=np.float32)
             # For integer parameters we probably should unpack arrays
             # with shape (1,)
-            result = np.reshape(flat_array, newshape=array_shape, order='C')
+            result = np.reshape(flat_array, shape=array_shape, order='C')
         else:
             result = loads(data)
 

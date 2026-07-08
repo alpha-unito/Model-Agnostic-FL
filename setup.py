@@ -92,7 +92,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/alpha-unito/OpenFL-extended",
     license="Apache-2.0",
-    python_requires=">=3.10",
+    python_requires=">=3.10,<3.14",
     packages=[
         "openfl",
         "openfl.component",
