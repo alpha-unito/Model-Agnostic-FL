@@ -18,8 +18,6 @@ from openfl.pipelines import TensorCodec
 from openfl.protocols import utils
 from openfl.utilities import TensorKey
 
-LOG_WANDB = True
-
 
 class DevicePolicy(Enum):
     """Device assignment policy."""
@@ -149,8 +147,10 @@ class Collaborator:
             api = wandb.Api(api_key=os.environ['WANDB_API_KEY'])
             self.wandb_project_name = os.environ[
                 "WANDB_PROJECT_NAME"] if "WANDB_PROJECT_NAME" in os.environ else "AdaBoost.f"
-            self.wandb_username = api.viewer.entiy
+            self.wandb_username = api.viewer.entity
             self.wandb_groupname = os.environ["WANDB_GROUP_NAME"] if "WANDB_GROUP_NAME" in os.environ else "AdaBoost.f"
+            if self.wandb_username:
+                self.LOG_WANDB = True
 
     def set_available_devices(self, cuda: Tuple[str] = ()):
         """

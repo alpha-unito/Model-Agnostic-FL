@@ -8,7 +8,6 @@ from setuptools import setup
 from setuptools.command.build import build  # setuptools >= 62.4
 
 try:
-    # Legacy editable installs (pip install -e . with no pyproject) use `develop`.
     from setuptools.command.develop import develop
 except ImportError:  # pragma: no cover
     develop = None
@@ -80,8 +79,8 @@ if develop is not None:
             self.run_command("build_grpc")
             super().run()
 
-    cmdclass["develop"] = DevelopGrpc
 
+    cmdclass["develop"] = DevelopGrpc
 
 setup(
     name="openfl-x",
@@ -138,19 +137,19 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
-        "Click>=8.1,<9",          # was ==8.0.1
-        "PyYAML>=6.0",            # was >=5.4.1
+        "Click>=8.1,<9",
+        "PyYAML>=6.0",
         "cloudpickle",
-        "cryptography>=42.0",     # was >=3.4.6
+        "cryptography>=42.0",
         "dill",
         "docker",
-        "dynaconf>=3.2,<4",       # was ==3.1.5
+        "dynaconf>=3.2,<4",
         "flatten_json",
-        "grpcio>=1.73,<2.0",      # was ~=1.48.2 (runtime)
-        "protobuf>=5.28,<7",      # was ==3.19.5 (must match grpcio-tools gencode; <7 required)
+        "grpcio>=1.73,<2.0",
+        "protobuf>=5.28,<7",
         "ipykernel",
         "jupyterlab",
-        "numpy",                  # pin numpy<2 if you hit AttributeError/dtype errors on import
+        "numpy",
         "pandas",
         "requests",
         "rich",
@@ -160,7 +159,7 @@ setup(
         "tqdm",
         "wandb",
     ],
-    # Best-effort only; see BUILD DEPENDENCY NOTE at top of file.
+
     setup_requires=["grpcio-tools~=1.73.0"],
     entry_points={
         "console_scripts": ["fx=openfl.interface.cli:entry"],
