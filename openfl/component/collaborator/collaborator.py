@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 """Collaborator module."""
+import os
 import time
 from enum import Enum
 from logging import getLogger
@@ -141,6 +142,16 @@ class Collaborator:
 
         self.task_runner.set_optimizer_treatment(self.opt_treatment.name)
 
+        # WANDB config options
+
+        self.LOG_WANDB = False
+        if "WANDB_API_KEY" in os.environ:
+            api = wandb.Api(api_key=os.environ['WANDB_API_KEY'])
+            self.wandb_project_name = os.environ[
+                "WANDB_PROJECT_NAME"] if "WANDB_PROJECT_NAME" in os.environ else "AdaBoost.f"
+            self.wandb_username = api.viewer.entiy
+            self.wandb_groupname = os.environ["WANDB_GROUP_NAME"] if "WANDB_GROUP_NAME" in os.environ else "AdaBoost.f"
+
     def set_available_devices(self, cuda: Tuple[str] = ()):
         """
         Set available CUDA devices.
@@ -151,8 +162,8 @@ class Collaborator:
 
     def run(self):
         """Run the collaborator."""
-        if LOG_WANDB:
-            wandb.init(project='AdaBoost.F', entity='gmittone', group="Krvskp",
+        if self.LOG_WANDB:
+            wandb.init(project=self.wandb_project_name, entity=self.wandb_username, group=self.wandb_groupname,
                        config={
                            "num_clients": 10,
                            "rounds": 300,
@@ -177,7 +188,7 @@ class Collaborator:
 
         self.logger.info('End of Federation reached. Exiting...')
         print("--- %s seconds ---" % (time.time() - start_time))
-        if LOG_WANDB:
+        if self.LOG_WANDB:
             wandb.finish()
 
     def run_simulation(self):
