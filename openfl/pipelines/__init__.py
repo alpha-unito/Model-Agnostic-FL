@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: Apache-2.0
 """openfl.pipelines module."""
 
-import pkgutil
+import importlib.util
 
-if pkgutil.find_loader('torch'):
+if importlib.util.find_spec('torch') is not None:
     from .eden_pipeline import EdenPipeline  # NOQA
 
 from .generic_pipeline import GenericPipeline
